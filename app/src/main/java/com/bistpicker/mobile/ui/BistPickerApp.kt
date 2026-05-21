@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -18,6 +19,7 @@ import com.bistpicker.mobile.R
 import com.bistpicker.mobile.ui.screens.home.HomeScreen
 import com.bistpicker.mobile.ui.screens.scoring.ScoringScreen
 import com.bistpicker.mobile.ui.screens.detail.DetailScreen
+import com.bistpicker.mobile.ui.screens.about.AboutScreen
 import com.bistpicker.mobile.ui.screens.macro.MacroScreen
 import com.bistpicker.mobile.ui.screens.history.HistoryScreen
 import com.bistpicker.mobile.ui.theme.BistPickerTheme
@@ -27,6 +29,7 @@ sealed class Screen(val route: String, val labelId: Int, val icon: ImageVector) 
     object Scoring : Screen("scoring", R.string.nav_scoring, Icons.Default.Search)
     object Market : Screen("market", R.string.nav_macro, Icons.Default.Public)
     object History : Screen("history", R.string.nav_history, Icons.Default.History)
+    object About : Screen("about", R.string.nav_about, Icons.Default.Info)
     object Detail : Screen("detail/{ticker}", 0, Icons.Default.Home)
 }
 
@@ -35,7 +38,7 @@ fun BistPickerApp() {
     val navController = rememberNavController()
 
     BistPickerTheme {
-        val screens = listOf(Screen.Home, Screen.Scoring, Screen.Market, Screen.History)
+        val screens = listOf(Screen.Home, Screen.Scoring, Screen.Market, Screen.History, Screen.About)
         Scaffold(
             bottomBar = {
                 NavigationBar {
@@ -44,7 +47,7 @@ fun BistPickerApp() {
                     screens.forEach { screen ->
                         NavigationBarItem(
                             icon = { Icon(screen.icon, contentDescription = null) },
-                            label = { Text(stringResource(screen.labelId)) },
+                            label = { Text(stringResource(screen.labelId), softWrap = false) },
                             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                             onClick = {
                                 navController.navigate(screen.route) {
@@ -84,6 +87,9 @@ fun BistPickerApp() {
                 }
                 composable(Screen.History.route) {
                     HistoryScreen()
+                }
+                composable(Screen.About.route) {
+                    AboutScreen()
                 }
                 composable(Screen.Detail.route) { backStackEntry ->
                     val ticker = backStackEntry.arguments?.getString("ticker") ?: ""

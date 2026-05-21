@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bistpicker.mobile.AppContainerProvider
 import com.bistpicker.mobile.data.StockDetail
@@ -32,7 +33,7 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(ticker, fontWeight = FontWeight.Bold) },
+                title = { Text(text = ticker, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -50,7 +51,7 @@ fun DetailScreen(
                     DetailContent(state.detail)
                 }
                 is DetailUiState.Error -> {
-                    Text(state.message, modifier = Modifier.align(Alignment.Center), color = MaterialTheme.colorScheme.error)
+                    Text(text = state.message, modifier = Modifier.align(Alignment.Center), color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -59,123 +60,114 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(detail: StockDetail) {
+    val isInPortfolio = detail.openPosition != null
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+        // 1. Header with Status Badge
         item {
             Column {
-                Text(detail.ticker, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
-                Text(detail.name ?: "", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
-            }
-        }
-
-        item {
-            Card(
-                Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-            ) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("Genel Bakis", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.height(12.dp))
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        DetailMetric("Alpha Skoru", String.format("%.1f", detail.alpha ?: 0.0))
-                        DetailMetric("Risk Grubu", detail.risk.name)
-                        DetailMetric("Sektor", detail.sector ?: "--")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = detail.ticker, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
+                    if (isInPortfolio) {
+                        Spacer(Modifier.width(12.dp))
+                        Surface(color = Color(0xFF4CAF50), shape = MaterialTheme.shapes.small) {
+                            Text("PORTFOYDE", modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
+                Text(text = detail.name ?: "", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
             }
         }
 
+        // 2. Investment Thesis / Inclusion Reason
         item {
-            Text("Neden Portfoyde?", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            val sectionTitle = if (isInPortfolio) "Neden Portfoyde?" else "Yatirim Tezi (Analiz)"
+            Text(text = sectionTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
             Card(
                 Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f))
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     val f = detail.factors
-                    if ((f.buffett ?: 0.0) > 80) {
+                    if ((f.buffett ?: 0.0) > 75) {
                         InclusionReason(
-                            "Yuksek Kalite (Buffett)",
-                            "Sirket, yuksek karliligi ve guclu rekabet avantaji sayesinde uzun vadeli 'Bileşik Getiri' makinesi ozelligi tasiyor."
+                            "Kalite Odakli Buyume (Buffett)",
+                            "Sirket, yuksek ozsermaye karliligi ile yatirdigi her 1 TL'yi verimli bir sekilde buyutuyor. Rekabet avantaji (Moat) cok guclu."
                         )
                     }
-                    if ((f.graham ?: 0.0) > 80) {
+                    if ((f.graham ?: 0.0) > 75) {
                         InclusionReason(
-                            "Ciddi Iskonto (Graham)",
-                            "Hisse fiyati, Benjamin Graham'in muhafazakar degerleme yontemine gore varliklarinin cok altinda islem goruyor."
+                            "Benjamin Graham Iskontosu",
+                            "Hisse fiyati, sirketin sahip oldugu varliklarin ve reel faiz ortamindaki degerinin cok altinda. Guvenlik marji (MOS) yuksek."
                         )
                     }
-                    if ((f.momentum ?: 0.0) > 80) {
+                    if ((f.momentum ?: 0.0) > 75) {
                         InclusionReason(
-                            "Guclu Trend (Momentum)",
-                            "Hisse, piyasa ortalamasinin cok uzerinde bir yukselis ivmesi yakalamis durumda ve trend korundukca elde tutuluyor."
+                            "Trend Takibi (Momentum)",
+                            "Piyasa bu sirketi fark etmis durumda. Yukselis ivmesi teknik olarak cok guclu ve ana endeksin uzerinde getiri sagliyor."
                         )
                     }
                     if ((f.piotroski ?: 0.0) >= 7) {
                         InclusionReason(
-                            "Mali Iyilesme (F-Score)",
-                            "Piotroski kriterlerine gore sirketin operasyonel verimliligigi ve finansal yapisi gecen yıla gore belirgin sekilde iyilesmis."
+                            "Mali Yapida Guclenme",
+                            "Sirketin borclulugu azaliyor ve operasyonel verimliligi artiyor. Piotroski F-Skoru sirketin 'iyilestigini' teyit ediyor."
                         )
                     }
                     
-                    if (detail.openPosition != null && detail.openPosition.reasons.isNotEmpty()) {
+                    if (isInPortfolio && detail.openPosition?.reasons?.isNotEmpty() == true) {
                         HorizontalDivider(Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
                         detail.openPosition.reasons.forEach { reason ->
-                            Text("• ${reason.label}: ${String.format("%.1f", reason.value)}", style = MaterialTheme.typography.bodySmall)
+                            Text(text = "• ${reason.label}: ${String.format("%.1f", reason.value)}", style = MaterialTheme.typography.bodySmall)
                         }
-                    } else if (detail.alpha != null && detail.alpha > 90) {
-                         InclusionReason(
-                            "ALPHA Sinyali",
-                            "Sirket, tum modellerin harmanlandigi ALPHA siralamasinda su an BIST'in en iyi %5'lik diliminde yer aliyor."
-                        )
                     }
                 }
             }
         }
 
+        // 3. Deep Financial Insights
         item {
-            Text("Model Detaylari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(text = "Derin Finansal Analiz", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                val f = detail.factors
-                FactorInfoCard(
-                    title = "Buffett (Kalite)",
-                    score = f.buffett,
-                    description = "Sirketin rekabet avantaji (moat), yuksek ozsermaye karliligi ve tutarli nakit akisi saglama gucunu olcer."
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                val fin = detail.financials
+                
+                InsightMetricCard(
+                    label = "ROE (Ozkaynak Karliligi)",
+                    value = "${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)}%",
+                    explanation = "Sirket ortaklarinin koydugu sermayeyi yillik %${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)} oraninda karla isletiyor. %20 uzeri genellikle 'basarili' kabul edilir."
                 )
-                FactorInfoCard(
-                    title = "Graham (Deger)",
-                    score = f.graham,
-                    description = "Hissenin 'ucuz' olup olmadigini, varliklarina ve reel faize gore potansiyelini Benjamin Graham formuluyle hesaplar."
+
+                InsightMetricCard(
+                    label = "Serbest Nakit Akisi (FCF)",
+                    value = "${String.format("%.0f", (fin?.freeCashFlow ?: 0.0) / 1_000_000.0)} M TL",
+                    explanation = "Tüm yatirimlar yapildiktan sonra sirketin elinde kalan net nakit. Bu rakam ne kadar yuksekse temettu ve yeni yatirim potansiyeli o kadar artar."
                 )
-                FactorInfoCard(
-                    title = "Piotroski (Mali Saglik)",
-                    score = f.piotroski,
-                    description = "9 farkli mali kriter uzerinden sirketin operasyonel verimliliginin gecen yıla gore iyilesip iyilesmedigine bakar."
-                )
-                FactorInfoCard(
-                    title = "Momentum (Trend)",
-                    score = f.momentum,
-                    description = "Hisse fiyatindaki yukselis trendinin gucunu ve piyasa ortalamasina gore ne kadar hizli hareket ettigini gosterir."
+
+                InsightMetricCard(
+                    label = "Reel EPS Buyumesi",
+                    value = "${String.format("%.1f", (fin?.realEpsGrowthPct ?: 0.0) * 100)}%",
+                    explanation = "Sirketin hisse basi kari, enflasyondan arindirildiktan sonra %${String.format("%.1f", (fin?.realEpsGrowthPct ?: 0.0) * 100)} buyumus. Gercek buyumeyi temsil eder."
                 )
             }
         }
 
+        // 4. Model Detail Scores
         item {
-            Text("Finansal Veriler", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(text = "Model Skorlari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
             Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    val fin = detail.financials
-                    MetricRow("ROE (Ozkaynak Karliligi)", "${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)}%")
-                    MetricRow("ROA (Varlik Karliligi)", "${String.format("%.1f", (fin?.roaAdjusted ?: 0.0) * 100)}%")
-                    MetricRow("EPS Buyumesi (Reel)", "${String.format("%.1f", (fin?.realEpsGrowthPct ?: 0.0) * 100)}%")
-                    val fcfVal = (fin?.freeCashFlow ?: 0.0) / 1_000_000.0
-                    MetricRow("Nakit Akisi (Serbest)", "${String.format("%.0f", fcfVal)} M TL")
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    val f = detail.factors
+                    SimpleScoreRow("Buffett Kalite", f.buffett)
+                    SimpleScoreRow("Graham Deger", f.graham)
+                    SimpleScoreRow("Piotroski Mali", f.piotroski)
+                    SimpleScoreRow("Momentum Gücü", f.momentum)
+                    SimpleScoreRow("DCF Iskonto", f.dcfMos)
                 }
             }
         }
@@ -184,42 +176,40 @@ fun DetailContent(detail: StockDetail) {
 
 @Composable
 fun InclusionReason(title: String, desc: String) {
-    Column(Modifier.padding(vertical = 4.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(8.dp).background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall))
-            Spacer(Modifier.width(8.dp))
-            Text(title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-        }
-        Text(desc, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 16.dp))
+    Column(Modifier.padding(vertical = 2.dp)) {
+        Text(text = title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+        Text(text = desc, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
-fun FactorInfoCard(title: String, score: Double?, description: String) {
+fun InsightMetricCard(label: String, value: String, explanation: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = CardDefaults.outlinedCardBorder()
     ) {
         Column(Modifier.padding(12.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
-                Surface(
-                    color = getScoreColor(score ?: 0.0),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    val sVal = score ?: 0.0
-                    Text(
-                        text = String.format("%.0f", sVal),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                        color = Color.White,
-                        fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
+                Text(text = label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.outline)
+                Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(Modifier.height(4.dp))
-            Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+            Text(text = explanation, style = androidx.compose.ui.text.TextStyle(fontSize = 11.sp, lineHeight = 15.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+@Composable
+fun SimpleScoreRow(label: String, score: Double?) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = label, style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = String.format("%.0f", score ?: 0.0),
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
+            color = getScoreColor(score ?: 0.0)
+        )
     }
 }
 
@@ -235,15 +225,15 @@ fun getScoreColor(score: Double): Color {
 @Composable
 fun DetailMetric(label: String, value: String) {
     Column {
-        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-        Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+        Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     }
 }
 
 @Composable
 fun MetricRow(label: String, value: String) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, style = MaterialTheme.typography.bodyMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
 }

@@ -35,6 +35,7 @@ string app_name
 string error_generic
 string filter
 string loading
+string nav_about
 string nav_history
 string nav_home
 string nav_macro

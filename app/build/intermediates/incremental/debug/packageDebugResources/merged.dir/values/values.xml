@@ -31,6 +31,7 @@
     <string name="error_generic">Bir hata olustu</string>
     <string name="filter">Filtrele</string>
     <string name="loading">Yukleniyor…</string>
+    <string name="nav_about">Hakkinda</string>
     <string name="nav_history">History</string>
     <string name="nav_home">Picks</string>
     <string name="nav_macro">Market</string>

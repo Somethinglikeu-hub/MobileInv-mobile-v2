@@ -5,6 +5,7 @@
     <string name="nav_scoring">Browse</string>
     <string name="nav_macro">Market</string>
     <string name="nav_history">History</string>
+    <string name="nav_about">Hakkinda</string>
     <string name="nav_settings">Ayarlar</string>
 
     <string name="loading">Yukleniyor…</string>
