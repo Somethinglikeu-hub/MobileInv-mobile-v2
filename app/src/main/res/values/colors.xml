@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      v2 uses a fixed palette (no Material You / dynamic colors). Reasoning:
+      this is a financial UI and the user repeatedly identifies stocks by
+      sector chip color and P&L green/red — dynamic recoloring would break
+      that recognition daily. Palette tuned for OLED dark + AA contrast.
+    -->
+
+    <!-- Brand -->
+    <color name="brand_primary">#FFB48A</color>          <!-- warm amber, BIST flag-ish -->
+    <color name="brand_primary_container">#3D2A1A</color>
+    <color name="brand_secondary">#7DD3FC</color>        <!-- info / link blue -->
+    <color name="brand_tertiary">#A78BFA</color>         <!-- accent violet for sparklines -->
+
+    <!-- Surfaces (dark default) -->
+    <color name="surface_dim">#0E0E10</color>
+    <color name="surface_default">#141416</color>
+    <color name="surface_bright">#1B1B1F</color>
+    <color name="surface_container">#1F1F23</color>
+    <color name="surface_container_high">#26262B</color>
+
+    <!-- Surfaces (light) -->
+    <color name="surface_light_default">#FAFAF9</color>
+    <color name="surface_light_container">#F1F1EE</color>
+
+    <!-- Text -->
+    <color name="text_high_dark">#F5F5F4</color>
+    <color name="text_med_dark">#B5B5B2</color>
+    <color name="text_low_dark">#7A7A78</color>
+    <color name="text_high_light">#191919</color>
+    <color name="text_med_light">#525252</color>
+
+    <!-- Outlines -->
+    <color name="outline_dark">#3A3A3F</color>
+    <color name="outline_light">#D4D4D2</color>
+
+    <!-- Semantic — used ONLY for P&L and risk badges, never for chrome. -->
+    <color name="pnl_positive">#22C55E</color>
+    <color name="pnl_negative">#EF4444</color>
+    <color name="risk_low">#16A34A</color>
+    <color name="risk_medium">#EAB308</color>
+    <color name="risk_high">#F97316</color>
+
+    <!-- Cash state badge palette -->
+    <color name="cash_normal">#22C55E</color>
+    <color name="cash_caution">#EAB308</color>
+    <color name="cash_defensive">#F97316</color>
+    <color name="cash_riskoff">#EF4444</color>
+</resources>

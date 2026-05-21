@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BIST Picker</string>
+    <string name="nav_home">Picks</string>
+    <string name="nav_scoring">Browse</string>
+    <string name="nav_macro">Market</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Ayarlar</string>
+
+    <string name="loading">Yukleniyor…</string>
+    <string name="error_generic">Bir hata olustu</string>
+    <string name="retry">Tekrar Dene</string>
+    <string name="search">Ara</string>
+    <string name="filter">Filtrele</string>
+    <string name="refresh">Yenile</string>
+</resources>

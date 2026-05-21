@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  English fallback (kept minimal — Turkish is the canonical UI language).
+  Only essentials translated; anything missing here falls through to the
+  default values/strings.xml automatically.
+-->
+<resources>
+    <string name="app_name">BIST Picker</string>
+    <string name="nav_home">Picks</string>
+    <string name="nav_scoring">Browse</string>
+    <string name="nav_macro">Macro</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong</string>
+    <string name="retry">Retry</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="refresh">Refresh</string>
+</resources>

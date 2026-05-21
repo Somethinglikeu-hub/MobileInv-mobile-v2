@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.bistpicker.mobile.app-mergeDebugResources-2:/values-en/values-en.xml",
+            "map": [
+                {
+                    "source": "C:\\Ai Projects\\MobileInvesting\\MobileInv-mobile-v2\\app\\src\\main\\res\\values-en\\strings.xml",
+                    "from": {
+                        "startLines": "7,14,17,13,8,10,9,11,18,15,16",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "255,534,679,489,304,394,347,438,721,597,637",
+                        "endColumns": "48,62,41,44,42,43,46,49,43,39,41",
+                        "endOffsets": "299,592,716,529,342,433,389,483,760,632,674"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,104,167,209,254,297,341,388,438,482,522",
+                        "endColumns": "48,62,41,44,42,43,46,49,43,39,41",
+                        "endOffsets": "99,162,204,249,292,336,383,433,477,517,559"
+                    }
+                }
+            ]
+        }
+    ]
+}

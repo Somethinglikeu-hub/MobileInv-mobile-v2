@@ -1,0 +1,66 @@
+com.bistpicker.mobile.app-resValues-0 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\build\generated\res\resValues\debug
+com.bistpicker.mobile.app-packageDebugResources-1 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.bistpicker.mobile.app-packageDebugResources-2 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.bistpicker.mobile.app-debug-3 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.bistpicker.mobile.app-debug-4 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\src\debug\res
+com.bistpicker.mobile.app-main-5 C:\Ai Projects\MobileInvesting\MobileInv-mobile-v2\app\src\main\res
+com.bistpicker.mobile.app-lifecycle-runtime-compose-release-6 C:\Users\kerem\.gradle\caches\9.1.0\transforms\01df169aca6f259fc8131c5af3bacee6\workspace\transformed\lifecycle-runtime-compose-release\res
+com.bistpicker.mobile.app-lifecycle-runtime-ktx-release-7 C:\Users\kerem\.gradle\caches\9.1.0\transforms\0545bd787c35874a187fca7276183347\workspace\transformed\lifecycle-runtime-ktx-release\res
+com.bistpicker.mobile.app-ui-release-8 C:\Users\kerem\.gradle\caches\9.1.0\transforms\05e261118c6305a094f59b6b48e34e3f\workspace\transformed\ui-release\res
+com.bistpicker.mobile.app-ui-geometry-release-9 C:\Users\kerem\.gradle\caches\9.1.0\transforms\08ac9387289bfda1e9c6a5ad43d80993\workspace\transformed\ui-geometry-release\res
+com.bistpicker.mobile.app-lifecycle-viewmodel-savedstate-2.8.7-10 C:\Users\kerem\.gradle\caches\9.1.0\transforms\0db8f7cb7e36c9b76d24cdaf8fb0947b\workspace\transformed\lifecycle-viewmodel-savedstate-2.8.7\res
+com.bistpicker.mobile.app-navigation-compose-2.8.3-11 C:\Users\kerem\.gradle\caches\9.1.0\transforms\1c5af87a53405a5ea2c6e0fe836b2de1\workspace\transformed\navigation-compose-2.8.3\res
+com.bistpicker.mobile.app-savedstate-1.2.1-12 C:\Users\kerem\.gradle\caches\9.1.0\transforms\2ea09f1e758d578ef460f9bdd7279e3a\workspace\transformed\savedstate-1.2.1\res
+com.bistpicker.mobile.app-lifecycle-livedata-2.8.7-13 C:\Users\kerem\.gradle\caches\9.1.0\transforms\30b0f4d1227f87635229f9c3c8bd6e8e\workspace\transformed\lifecycle-livedata-2.8.7\res
+com.bistpicker.mobile.app-datastore-preferences-release-14 C:\Users\kerem\.gradle\caches\9.1.0\transforms\3365959c1d967bf505a1c160d3241db1\workspace\transformed\datastore-preferences-release\res
+com.bistpicker.mobile.app-work-runtime-ktx-2.10.0-15 C:\Users\kerem\.gradle\caches\9.1.0\transforms\35128e593e2aa7de1d5c684ad9ed9731\workspace\transformed\work-runtime-ktx-2.10.0\res
+com.bistpicker.mobile.app-lifecycle-service-2.8.7-16 C:\Users\kerem\.gradle\caches\9.1.0\transforms\36a3a12ceb5615001bec296f843219f8\workspace\transformed\lifecycle-service-2.8.7\res
+com.bistpicker.mobile.app-lifecycle-livedata-core-ktx-2.8.7-17 C:\Users\kerem\.gradle\caches\9.1.0\transforms\37e7181bf26dffc6ee14585242a3ca55\workspace\transformed\lifecycle-livedata-core-ktx-2.8.7\res
+com.bistpicker.mobile.app-ui-unit-release-18 C:\Users\kerem\.gradle\caches\9.1.0\transforms\3dcd943d1ff36ed926dd86eafcf438a7\workspace\transformed\ui-unit-release\res
+com.bistpicker.mobile.app-lifecycle-livedata-core-2.8.7-19 C:\Users\kerem\.gradle\caches\9.1.0\transforms\48c47bda71e0eb3b3db5c9869cc98b92\workspace\transformed\lifecycle-livedata-core-2.8.7\res
+com.bistpicker.mobile.app-activity-ktx-1.9.3-20 C:\Users\kerem\.gradle\caches\9.1.0\transforms\50e5c5e73460ba98ab287d772b29d858\workspace\transformed\activity-ktx-1.9.3\res
+com.bistpicker.mobile.app-ui-tooling-data-release-21 C:\Users\kerem\.gradle\caches\9.1.0\transforms\56281abd2434bea20ba0802e8448e038\workspace\transformed\ui-tooling-data-release\res
+com.bistpicker.mobile.app-ui-util-release-22 C:\Users\kerem\.gradle\caches\9.1.0\transforms\594db16edd9092774be23d365e4425fc\workspace\transformed\ui-util-release\res
+com.bistpicker.mobile.app-lifecycle-viewmodel-ktx-2.8.7-23 C:\Users\kerem\.gradle\caches\9.1.0\transforms\5a7b32707147101018a2b56aaeb04bb9\workspace\transformed\lifecycle-viewmodel-ktx-2.8.7\res
+com.bistpicker.mobile.app-animation-core-release-24 C:\Users\kerem\.gradle\caches\9.1.0\transforms\5d2131c1ad320785e0da55f48a4f6b1d\workspace\transformed\animation-core-release\res
+com.bistpicker.mobile.app-runtime-saveable-release-25 C:\Users\kerem\.gradle\caches\9.1.0\transforms\5e0fb78511bf634366ce8b988599efec\workspace\transformed\runtime-saveable-release\res
+com.bistpicker.mobile.app-annotation-experimental-1.4.1-26 C:\Users\kerem\.gradle\caches\9.1.0\transforms\5ef7e16ade3c0dc834d5d60e1af95f52\workspace\transformed\annotation-experimental-1.4.1\res
+com.bistpicker.mobile.app-navigation-common-2.8.3-27 C:\Users\kerem\.gradle\caches\9.1.0\transforms\5fb6625003e47526f5c664b86cd1c952\workspace\transformed\navigation-common-2.8.3\res
+com.bistpicker.mobile.app-room-runtime-release-28 C:\Users\kerem\.gradle\caches\9.1.0\transforms\66f1f46f164822c712c6e3803f900479\workspace\transformed\room-runtime-release\res
+com.bistpicker.mobile.app-activity-1.9.3-29 C:\Users\kerem\.gradle\caches\9.1.0\transforms\6848d1533062eabdaf8b780f7ccc497a\workspace\transformed\activity-1.9.3\res
+com.bistpicker.mobile.app-material-release-30 C:\Users\kerem\.gradle\caches\9.1.0\transforms\6ec8f45bc205a902a8034c204c877fd1\workspace\transformed\material-release\res
+com.bistpicker.mobile.app-tracing-ktx-1.2.0-31 C:\Users\kerem\.gradle\caches\9.1.0\transforms\70962d01248de61c62369dd8715f6adb\workspace\transformed\tracing-ktx-1.2.0\res
+com.bistpicker.mobile.app-customview-poolingcontainer-1.0.0-32 C:\Users\kerem\.gradle\caches\9.1.0\transforms\70f4ffdc5ce4b352e4619e1d5878d94c\workspace\transformed\customview-poolingcontainer-1.0.0\res
+com.bistpicker.mobile.app-material-icons-core-release-33 C:\Users\kerem\.gradle\caches\9.1.0\transforms\85fe84320b1e5eadd7e113eb88fbb5d7\workspace\transformed\material-icons-core-release\res
+com.bistpicker.mobile.app-ui-graphics-release-34 C:\Users\kerem\.gradle\caches\9.1.0\transforms\8b1944e9d92539ede71f1afe9b06b655\workspace\transformed\ui-graphics-release\res
+com.bistpicker.mobile.app-datastore-release-35 C:\Users\kerem\.gradle\caches\9.1.0\transforms\953de59055f3bc77fd9688f5f4780520\workspace\transformed\datastore-release\res
+com.bistpicker.mobile.app-work-runtime-2.10.0-36 C:\Users\kerem\.gradle\caches\9.1.0\transforms\95a4d51b180cfad7865c7220f80830e8\workspace\transformed\work-runtime-2.10.0\res
+com.bistpicker.mobile.app-ui-tooling-release-37 C:\Users\kerem\.gradle\caches\9.1.0\transforms\9704ee13759907c783610fbbdd4cf595\workspace\transformed\ui-tooling-release\res
+com.bistpicker.mobile.app-ui-tooling-preview-release-38 C:\Users\kerem\.gradle\caches\9.1.0\transforms\97e001f433af7fcc2d4fb1075387cb05\workspace\transformed\ui-tooling-preview-release\res
+com.bistpicker.mobile.app-lifecycle-viewmodel-release-39 C:\Users\kerem\.gradle\caches\9.1.0\transforms\9bf9df3076d3907830916512849a1ed3\workspace\transformed\lifecycle-viewmodel-release\res
+com.bistpicker.mobile.app-core-runtime-2.2.0-40 C:\Users\kerem\.gradle\caches\9.1.0\transforms\9eeec867381d7ad5ec04b8340570b8fc\workspace\transformed\core-runtime-2.2.0\res
+com.bistpicker.mobile.app-savedstate-ktx-1.2.1-41 C:\Users\kerem\.gradle\caches\9.1.0\transforms\9ff985ee55b01b7d97527cac94a8651c\workspace\transformed\savedstate-ktx-1.2.1\res
+com.bistpicker.mobile.app-navigation-runtime-2.8.3-42 C:\Users\kerem\.gradle\caches\9.1.0\transforms\a53892ccb266dec57aa5d91e89e6c344\workspace\transformed\navigation-runtime-2.8.3\res
+com.bistpicker.mobile.app-lifecycle-process-2.8.7-43 C:\Users\kerem\.gradle\caches\9.1.0\transforms\ad0c413badfd1dfac7980d3f64adf8af\workspace\transformed\lifecycle-process-2.8.7\res
+com.bistpicker.mobile.app-graphics-path-1.0.1-44 C:\Users\kerem\.gradle\caches\9.1.0\transforms\adfe9432241600102c934c6c178a45e9\workspace\transformed\graphics-path-1.0.1\res
+com.bistpicker.mobile.app-core-ktx-1.15.0-45 C:\Users\kerem\.gradle\caches\9.1.0\transforms\b01c8851b00140b1e70d901bde498596\workspace\transformed\core-ktx-1.15.0\res
+com.bistpicker.mobile.app-room-ktx-2.7.0-alpha11-46 C:\Users\kerem\.gradle\caches\9.1.0\transforms\b2e20f5175d3f2171db22aa7450439f7\workspace\transformed\room-ktx-2.7.0-alpha11\res
+com.bistpicker.mobile.app-foundation-layout-release-47 C:\Users\kerem\.gradle\caches\9.1.0\transforms\b74830f4cdf338adee0cf3536767cbb5\workspace\transformed\foundation-layout-release\res
+com.bistpicker.mobile.app-activity-compose-1.9.3-48 C:\Users\kerem\.gradle\caches\9.1.0\transforms\c353c4fdef921dd5fbf56e53eb8e68df\workspace\transformed\activity-compose-1.9.3\res
+com.bistpicker.mobile.app-datastore-core-release-49 C:\Users\kerem\.gradle\caches\9.1.0\transforms\c692a82ec8c0088b9f09388604124bac\workspace\transformed\datastore-core-release\res
+com.bistpicker.mobile.app-material3-release-50 C:\Users\kerem\.gradle\caches\9.1.0\transforms\c6c1d4c017f4d60d2701e9778e518521\workspace\transformed\material3-release\res
+com.bistpicker.mobile.app-lifecycle-runtime-release-51 C:\Users\kerem\.gradle\caches\9.1.0\transforms\c781bc7335e5aa68c32918b404128822\workspace\transformed\lifecycle-runtime-release\res
+com.bistpicker.mobile.app-animation-release-52 C:\Users\kerem\.gradle\caches\9.1.0\transforms\ca9591cd336d9e9101acfe1ca4dc0eaf\workspace\transformed\animation-release\res
+com.bistpicker.mobile.app-lifecycle-viewmodel-compose-release-53 C:\Users\kerem\.gradle\caches\9.1.0\transforms\cc5709d8feb99fce892de1a7cfb4e102\workspace\transformed\lifecycle-viewmodel-compose-release\res
+com.bistpicker.mobile.app-runtime-release-54 C:\Users\kerem\.gradle\caches\9.1.0\transforms\cd6e91ac15450b504dd7eceb7d093152\workspace\transformed\runtime-release\res
+com.bistpicker.mobile.app-core-1.15.0-55 C:\Users\kerem\.gradle\caches\9.1.0\transforms\d037bea987e13a7c4d3a651f463f6e05\workspace\transformed\core-1.15.0\res
+com.bistpicker.mobile.app-tracing-1.2.0-56 C:\Users\kerem\.gradle\caches\9.1.0\transforms\d2425abada9e5d2bcd4a980ed720f726\workspace\transformed\tracing-1.2.0\res
+com.bistpicker.mobile.app-startup-runtime-1.1.1-57 C:\Users\kerem\.gradle\caches\9.1.0\transforms\d5041bf75813dfd53187bf7418e1f248\workspace\transformed\startup-runtime-1.1.1\res
+com.bistpicker.mobile.app-foundation-release-58 C:\Users\kerem\.gradle\caches\9.1.0\transforms\d9875ebafbc134a1a50928d7a994471b\workspace\transformed\foundation-release\res
+com.bistpicker.mobile.app-ui-text-release-59 C:\Users\kerem\.gradle\caches\9.1.0\transforms\ea4bb5e4ad3621b7e3cdbb6fe2c7c882\workspace\transformed\ui-text-release\res
+com.bistpicker.mobile.app-material-ripple-release-60 C:\Users\kerem\.gradle\caches\9.1.0\transforms\ec6ab3cdc7e3ac6096104d8e081dddda\workspace\transformed\material-ripple-release\res
+com.bistpicker.mobile.app-navigation-runtime-ktx-2.8.3-61 C:\Users\kerem\.gradle\caches\9.1.0\transforms\f0b69f5b383debe480257ca8554a2eba\workspace\transformed\navigation-runtime-ktx-2.8.3\res
+com.bistpicker.mobile.app-profileinstaller-1.3.1-62 C:\Users\kerem\.gradle\caches\9.1.0\transforms\f54dde575a1d83a62bb15c14d1415626\workspace\transformed\profileinstaller-1.3.1\res
+com.bistpicker.mobile.app-navigation-common-ktx-2.8.3-63 C:\Users\kerem\.gradle\caches\9.1.0\transforms\f57e8c2609f359ac8f552afc54d3f676\workspace\transformed\navigation-common-ktx-2.8.3\res
+com.bistpicker.mobile.app-material-icons-extended-release-64 C:\Users\kerem\.gradle\caches\9.1.0\transforms\f92464efffe24e4da9918a2b55a64359\workspace\transformed\material-icons-extended-release\res
+com.bistpicker.mobile.app-emoji2-1.3.0-65 C:\Users\kerem\.gradle\caches\9.1.0\transforms\fa4fd324b0268763266f11e84711516d\workspace\transformed\emoji2-1.3.0\res
