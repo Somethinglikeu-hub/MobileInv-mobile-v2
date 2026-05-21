@@ -33,19 +33,21 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
 
 
   protected override fun createOpenDelegate(): RoomOpenDelegate {
-    val _openDelegate: RoomOpenDelegate = object : RoomOpenDelegate(8,
-        "111e767eec75784445e9ae4c48f6be2f", "b21d4228e25f7397a1f2014d091fcb34") {
+    val _openDelegate: RoomOpenDelegate = object : RoomOpenDelegate(10,
+        "1a568960a52bbf15d35554a014d67e09", "7416e9dbd850099f4f17ec1dd8f487d1") {
       public override fun createAllTables(connection: SQLiteConnection) {
         connection.execSQL("CREATE TABLE IF NOT EXISTS `snapshot_metadata` (`id` INTEGER NOT NULL, `schema_version` INTEGER NOT NULL, `exported_at` TEXT NOT NULL, `snapshot_date` TEXT, `latest_price_date` TEXT, `source_db_path` TEXT, `company_count` INTEGER NOT NULL, `scoring_row_count` INTEGER NOT NULL, `price_history_days` INTEGER NOT NULL, PRIMARY KEY(`id`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `home_summary` (`id` INTEGER NOT NULL, `total_return_avg` REAL, `active_return_avg` REAL, `win_rate` REAL, `benchmark_ytd` REAL, `macro_date` TEXT, `policy_rate_pct` REAL, `cpi_yoy_pct` REAL, `usdtry_rate` REAL, `regime` TEXT, `cash_state` TEXT, `cash_pct` REAL, `cash_days_in_state` INTEGER, `cash_last_transition_date` TEXT, `cash_target_state` TEXT, `cash_notes` TEXT, `cash_raw_signal` INTEGER, PRIMARY KEY(`id`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `open_positions` (`sort_order` INTEGER NOT NULL, `portfolio` TEXT, `ticker` TEXT NOT NULL, `name` TEXT, `company_id` INTEGER, `entry_price` REAL, `current_price` REAL, `pnl_pct` REAL, `target_price` REAL, `stop_loss_price` REAL, `stop_pct_from_entry` REAL, `composite_score` REAL, `selection_date` TEXT, `days_held` INTEGER, `reason_top_factors_json` TEXT, `quality_flags_json` TEXT, `dcf_margin_of_safety_pct` REAL, `dcf_intrinsic_value` REAL, `dcf_growth_rate_pct` REAL, `dcf_discount_rate_pct` REAL, `dcf_terminal_growth_pct` REAL, PRIMARY KEY(`sort_order`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `portfolio_history` (`sort_order` INTEGER NOT NULL, `portfolio` TEXT, `ticker` TEXT NOT NULL, `name` TEXT, `selection_date` TEXT, `exit_date` TEXT, `entry_price` REAL, `exit_price` REAL, `pnl_pct` REAL, `exit_reason` TEXT, `holding_days` INTEGER, PRIMARY KEY(`sort_order`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `companies` (`id` INTEGER NOT NULL, `ticker` TEXT NOT NULL, `name` TEXT, `company_type` TEXT, `sector_bist` TEXT, `sector_custom` TEXT, `is_bist100` INTEGER NOT NULL, `is_ipo` INTEGER NOT NULL, `free_float_pct` REAL, `listing_date` TEXT, `is_active` INTEGER NOT NULL, PRIMARY KEY(`id`))")
-        connection.execSQL("CREATE TABLE IF NOT EXISTS `scoring_latest` (`company_id` INTEGER NOT NULL, `ticker` TEXT NOT NULL, `name` TEXT, `type` TEXT, `sector` TEXT, `is_bist100` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, `free_float_pct` REAL, `avg_volume_try` REAL, `ranking_score` REAL, `ranking_source` TEXT, `model_score` REAL, `alpha` REAL, `alpha_x_score` REAL, `alpha_x_rank` REAL, `alpha_x_confidence` REAL, `alpha_core_eligible` INTEGER NOT NULL, `alpha_x_eligible` INTEGER NOT NULL, `alpha_reason` TEXT, `alpha_primary_blocker` TEXT, `alpha_research_bucket` TEXT, `alpha_snapshot_streak` INTEGER, `risk` TEXT, `data_completeness` REAL, `scoring_date` TEXT, `model_used` TEXT, `buffett` REAL, `graham` REAL, `piotroski` REAL, `piotroski_raw` INTEGER, `magic_formula` REAL, `lynch_peg` REAL, `dcf_mos` REAL, `momentum` REAL, `insider` REAL, `technical` REAL, `dividend` REAL, `beta` REAL, `delta` REAL, `quality_flags_json` TEXT, `dcf_intrinsic_value` REAL, `dcf_growth_rate_pct` REAL, `dcf_discount_rate_pct` REAL, `dcf_terminal_growth_pct` REAL, PRIMARY KEY(`company_id`))")
+        connection.execSQL("CREATE TABLE IF NOT EXISTS `scoring_latest` (`company_id` INTEGER NOT NULL, `ticker` TEXT NOT NULL, `name` TEXT, `sector` TEXT, `type` TEXT, `is_bist100` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, `free_float_pct` REAL, `avg_volume_try` REAL, `ranking_score` REAL, `ranking_source` TEXT, `model_score` REAL, `alpha` REAL, `alpha_x_score` REAL, `alpha_x_rank` REAL, `alpha_x_confidence` REAL, `alpha_core_eligible` INTEGER NOT NULL, `alpha_x_eligible` INTEGER NOT NULL, `alpha_reason` TEXT, `alpha_primary_blocker` TEXT, `alpha_research_bucket` TEXT, `alpha_snapshot_streak` INTEGER, `risk` TEXT, `data_completeness` REAL, `scoring_date` TEXT, `model_used` TEXT, `buffett` REAL, `graham` REAL, `piotroski` REAL, `piotroski_raw` INTEGER, `magic_formula` REAL, `lynch_peg` REAL, `dcf_mos` REAL, `momentum` REAL, `insider` REAL, `technical` REAL, `dividend` REAL, `beta` REAL, `delta` REAL, `quality_flags_json` TEXT, `dcf_intrinsic_value` REAL, `dcf_growth_rate_pct` REAL, `dcf_discount_rate_pct` REAL, `dcf_terminal_growth_pct` REAL, PRIMARY KEY(`company_id`))")
+        connection.execSQL("CREATE TABLE IF NOT EXISTS `sector_benchmarks` (`sector` TEXT NOT NULL, `roe_median` REAL, `roa_median` REAL, `net_margin_median` REAL, `company_count` INTEGER, PRIMARY KEY(`sector`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `adjusted_metrics_latest` (`company_id` INTEGER NOT NULL, `period_end` TEXT, `reported_net_income` REAL, `monetary_gain_loss` REAL, `adjusted_net_income` REAL, `owner_earnings` REAL, `free_cash_flow` REAL, `roe_adjusted` REAL, `roa_adjusted` REAL, `eps_adjusted` REAL, `real_eps_growth_pct` REAL, `related_party_revenue_pct` REAL, `maintenance_capex` REAL, `growth_capex` REAL, PRIMARY KEY(`company_id`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `price_history_730d` (`company_id` INTEGER NOT NULL, `date` TEXT NOT NULL, `open` REAL, `high` REAL, `low` REAL, `close` REAL, `volume` INTEGER, `adjusted_close` REAL, PRIMARY KEY(`company_id`, `date`))")
+        connection.execSQL("CREATE TABLE IF NOT EXISTS `factor_history_quarterly` (`company_id` INTEGER NOT NULL, `quarter_end` TEXT NOT NULL, `scoring_date` TEXT NOT NULL, `buffett` REAL, `graham` REAL, `piotroski` REAL, `magic_formula` REAL, `lynch_peg` REAL, `dcf_mos` REAL, `momentum` REAL, `technical` REAL, `dividend` REAL, `composite_alpha` REAL, `data_completeness` REAL, PRIMARY KEY(`company_id`, `quarter_end`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)")
-        connection.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '111e767eec75784445e9ae4c48f6be2f')")
+        connection.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a568960a52bbf15d35554a014d67e09')")
       }
 
       public override fun dropAllTables(connection: SQLiteConnection) {
@@ -55,8 +57,10 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
         connection.execSQL("DROP TABLE IF EXISTS `portfolio_history`")
         connection.execSQL("DROP TABLE IF EXISTS `companies`")
         connection.execSQL("DROP TABLE IF EXISTS `scoring_latest`")
+        connection.execSQL("DROP TABLE IF EXISTS `sector_benchmarks`")
         connection.execSQL("DROP TABLE IF EXISTS `adjusted_metrics_latest`")
         connection.execSQL("DROP TABLE IF EXISTS `price_history_730d`")
+        connection.execSQL("DROP TABLE IF EXISTS `factor_history_quarterly`")
       }
 
       public override fun onCreate(connection: SQLiteConnection) {
@@ -299,9 +303,9 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
             TableInfo.CREATED_FROM_ENTITY))
         _columnsScoringLatest.put("name", TableInfo.Column("name", "TEXT", false, 0, null,
             TableInfo.CREATED_FROM_ENTITY))
-        _columnsScoringLatest.put("type", TableInfo.Column("type", "TEXT", false, 0, null,
-            TableInfo.CREATED_FROM_ENTITY))
         _columnsScoringLatest.put("sector", TableInfo.Column("sector", "TEXT", false, 0, null,
+            TableInfo.CREATED_FROM_ENTITY))
+        _columnsScoringLatest.put("type", TableInfo.Column("type", "TEXT", false, 0, null,
             TableInfo.CREATED_FROM_ENTITY))
         _columnsScoringLatest.put("is_bist100", TableInfo.Column("is_bist100", "INTEGER", true, 0,
             null, TableInfo.CREATED_FROM_ENTITY))
@@ -396,6 +400,31 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
               | Found:
               |""".trimMargin() + _existingScoringLatest)
         }
+        val _columnsSectorBenchmarks: MutableMap<String, TableInfo.Column> = mutableMapOf()
+        _columnsSectorBenchmarks.put("sector", TableInfo.Column("sector", "TEXT", true, 1, null,
+            TableInfo.CREATED_FROM_ENTITY))
+        _columnsSectorBenchmarks.put("roe_median", TableInfo.Column("roe_median", "REAL", false, 0,
+            null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsSectorBenchmarks.put("roa_median", TableInfo.Column("roa_median", "REAL", false, 0,
+            null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsSectorBenchmarks.put("net_margin_median", TableInfo.Column("net_margin_median",
+            "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsSectorBenchmarks.put("company_count", TableInfo.Column("company_count", "INTEGER",
+            false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        val _foreignKeysSectorBenchmarks: MutableSet<TableInfo.ForeignKey> = mutableSetOf()
+        val _indicesSectorBenchmarks: MutableSet<TableInfo.Index> = mutableSetOf()
+        val _infoSectorBenchmarks: TableInfo = TableInfo("sector_benchmarks",
+            _columnsSectorBenchmarks, _foreignKeysSectorBenchmarks, _indicesSectorBenchmarks)
+        val _existingSectorBenchmarks: TableInfo = read(connection, "sector_benchmarks")
+        if (!_infoSectorBenchmarks.equals(_existingSectorBenchmarks)) {
+          return RoomOpenDelegate.ValidationResult(false, """
+              |sector_benchmarks(com.bistpicker.mobile.data.local.SectorBenchmarkEntity).
+              | Expected:
+              |""".trimMargin() + _infoSectorBenchmarks + """
+              |
+              | Found:
+              |""".trimMargin() + _existingSectorBenchmarks)
+        }
         val _columnsAdjustedMetricsLatest: MutableMap<String, TableInfo.Column> = mutableMapOf()
         _columnsAdjustedMetricsLatest.put("company_id", TableInfo.Column("company_id", "INTEGER",
             true, 1, null, TableInfo.CREATED_FROM_ENTITY))
@@ -476,6 +505,52 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
               | Found:
               |""".trimMargin() + _existingPriceHistory730d)
         }
+        val _columnsFactorHistoryQuarterly: MutableMap<String, TableInfo.Column> = mutableMapOf()
+        _columnsFactorHistoryQuarterly.put("company_id", TableInfo.Column("company_id", "INTEGER",
+            true, 1, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("quarter_end", TableInfo.Column("quarter_end", "TEXT",
+            true, 2, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("scoring_date", TableInfo.Column("scoring_date", "TEXT",
+            true, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("buffett", TableInfo.Column("buffett", "REAL", false, 0,
+            null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("graham", TableInfo.Column("graham", "REAL", false, 0,
+            null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("piotroski", TableInfo.Column("piotroski", "REAL", false,
+            0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("magic_formula", TableInfo.Column("magic_formula",
+            "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("lynch_peg", TableInfo.Column("lynch_peg", "REAL", false,
+            0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("dcf_mos", TableInfo.Column("dcf_mos", "REAL", false, 0,
+            null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("momentum", TableInfo.Column("momentum", "REAL", false,
+            0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("technical", TableInfo.Column("technical", "REAL", false,
+            0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("dividend", TableInfo.Column("dividend", "REAL", false,
+            0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("composite_alpha", TableInfo.Column("composite_alpha",
+            "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsFactorHistoryQuarterly.put("data_completeness",
+            TableInfo.Column("data_completeness", "REAL", false, 0, null,
+            TableInfo.CREATED_FROM_ENTITY))
+        val _foreignKeysFactorHistoryQuarterly: MutableSet<TableInfo.ForeignKey> = mutableSetOf()
+        val _indicesFactorHistoryQuarterly: MutableSet<TableInfo.Index> = mutableSetOf()
+        val _infoFactorHistoryQuarterly: TableInfo = TableInfo("factor_history_quarterly",
+            _columnsFactorHistoryQuarterly, _foreignKeysFactorHistoryQuarterly,
+            _indicesFactorHistoryQuarterly)
+        val _existingFactorHistoryQuarterly: TableInfo = read(connection,
+            "factor_history_quarterly")
+        if (!_infoFactorHistoryQuarterly.equals(_existingFactorHistoryQuarterly)) {
+          return RoomOpenDelegate.ValidationResult(false, """
+              |factor_history_quarterly(com.bistpicker.mobile.data.local.FactorHistoryEntity).
+              | Expected:
+              |""".trimMargin() + _infoFactorHistoryQuarterly + """
+              |
+              | Found:
+              |""".trimMargin() + _existingFactorHistoryQuarterly)
+        }
         return RoomOpenDelegate.ValidationResult(true, null)
       }
     }
@@ -487,13 +562,14 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
     val _viewTables: MutableMap<String, Set<String>> = mutableMapOf()
     return InvalidationTracker(this, _shadowTablesMap, _viewTables, "snapshot_metadata",
         "home_summary", "open_positions", "portfolio_history", "companies", "scoring_latest",
-        "adjusted_metrics_latest", "price_history_730d")
+        "sector_benchmarks", "adjusted_metrics_latest", "price_history_730d",
+        "factor_history_quarterly")
   }
 
   public override fun clearAllTables() {
     super.performClear(false, "snapshot_metadata", "home_summary", "open_positions",
-        "portfolio_history", "companies", "scoring_latest", "adjusted_metrics_latest",
-        "price_history_730d")
+        "portfolio_history", "companies", "scoring_latest", "sector_benchmarks",
+        "adjusted_metrics_latest", "price_history_730d", "factor_history_quarterly")
   }
 
   protected override fun getRequiredTypeConverterClasses(): Map<KClass<*>, List<KClass<*>>> {

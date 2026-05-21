@@ -144,16 +144,20 @@ class LocalBistRepository(
         val openPosition = dao().getOpenPosition(ticker)
         val metrics = dao().getAdjustedMetrics(score.companyId)
         val priceHistory = dao().getPriceHistory(score.companyId).map { it.toPricePoint() }
+        val factorHistory = dao().getFactorHistory(score.companyId).map { it.toFactorHistoryPoint() }
+        
+        val sector = score.sector ?: company?.sectorCustom
+        val benchmark = if (sector != null) dao().getSectorBenchmark(sector)?.toDomain() else null
 
         val flags = parseQualityFlags(openPosition?.qualityFlagsJson ?: score.qualityFlagsJson)
 
         return StockDetail(
             ticker = score.ticker,
             name = score.name ?: company?.name,
-            sector = score.sector ?: company?.sectorCustom ?: company?.sectorBist,
+            sector = sector,
             type = score.type ?: company?.companyType,
             isBist100 = score.isBist100 == 1,
-            freeFloatPct = score.freeFloatPct ?: company?.freeFloatPct,
+            freeFloatPct = company?.freeFloatPct,
             rankingScore = score.rankingScore,
             rankingSource = score.rankingSource,
             alpha = score.alpha,
@@ -185,10 +189,11 @@ class LocalBistRepository(
                 mosPct = score.dcfMos,
             ),
             financials = metrics?.toFinancialsSnapshot(),
-            factorHistory = emptyList(),
+            factorHistory = factorHistory,
             priceHistory = priceHistory,
             openPosition = openPosition?.toOpenPosition(),
             qualityFlags = flags,
+            sectorBenchmark = benchmark,
         )
     }
 
@@ -282,6 +287,25 @@ class LocalBistRepository(
     private fun PriceHistoryEntity.toPricePoint() = PricePoint(
         date = date, open = open, high = high, low = low, close = close,
         volume = volume, adjustedClose = adjustedClose,
+    )
+
+    private fun FactorHistoryEntity.toFactorHistoryPoint() = FactorHistoryPoint(
+        quarterEnd = quarterEnd,
+        buffett = buffett,
+        graham = graham,
+        piotroski = piotroski,
+        momentum = momentum,
+        technical = technical,
+        dcfMos = dcfMos,
+        compositeAlpha = compositeAlpha,
+    )
+
+    private fun SectorBenchmarkEntity.toDomain() = SectorBenchmark(
+        sector = sector,
+        roeMedian = roeMedian,
+        roaMedian = roaMedian,
+        netMarginMedian = netMarginMedian,
+        companyCount = companyCount,
     )
 
     private fun HomeSummaryEntity.toMacro() = HomeMacro(

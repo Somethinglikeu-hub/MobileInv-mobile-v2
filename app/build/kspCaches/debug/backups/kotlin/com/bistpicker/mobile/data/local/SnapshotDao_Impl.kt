@@ -541,8 +541,8 @@ public class SnapshotDao_Impl(
         val _cursorIndexOfCompanyId: Int = getColumnIndexOrThrow(_stmt, "company_id")
         val _cursorIndexOfTicker: Int = getColumnIndexOrThrow(_stmt, "ticker")
         val _cursorIndexOfName: Int = getColumnIndexOrThrow(_stmt, "name")
-        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfSector: Int = getColumnIndexOrThrow(_stmt, "sector")
+        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfIsBist100: Int = getColumnIndexOrThrow(_stmt, "is_bist100")
         val _cursorIndexOfIsActive: Int = getColumnIndexOrThrow(_stmt, "is_active")
         val _cursorIndexOfFreeFloatPct: Int = getColumnIndexOrThrow(_stmt, "free_float_pct")
@@ -603,17 +603,17 @@ public class SnapshotDao_Impl(
           } else {
             _tmpName = _stmt.getText(_cursorIndexOfName)
           }
-          val _tmpType: String?
-          if (_stmt.isNull(_cursorIndexOfType)) {
-            _tmpType = null
-          } else {
-            _tmpType = _stmt.getText(_cursorIndexOfType)
-          }
           val _tmpSector: String?
           if (_stmt.isNull(_cursorIndexOfSector)) {
             _tmpSector = null
           } else {
             _tmpSector = _stmt.getText(_cursorIndexOfSector)
+          }
+          val _tmpType: String?
+          if (_stmt.isNull(_cursorIndexOfType)) {
+            _tmpType = null
+          } else {
+            _tmpType = _stmt.getText(_cursorIndexOfType)
           }
           val _tmpIsBist100: Int
           _tmpIsBist100 = _stmt.getLong(_cursorIndexOfIsBist100).toInt()
@@ -834,7 +834,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _item =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpType,_tmpSector,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
           _result.add(_item)
         }
         _result
@@ -857,25 +857,17 @@ public class SnapshotDao_Impl(
   ): List<ScoringLatestEntity> {
     val _sql: String = """
         |
-        |        SELECT * FROM scoring_latest
-        |        WHERE
-        |          (? = 0 OR alpha_core_eligible = 1)
+        |        SELECT * FROM scoring_latest 
+        |        WHERE (? = 0 OR alpha_core_eligible = 1)
         |          AND (? = 0 OR alpha_x_eligible = 1)
         |          AND (? = 0 OR is_bist100 = 1)
         |          AND (? IS NULL OR sector = ?)
         |          AND (? IS NULL OR risk = ?)
-        |          AND (? IS NULL OR (ranking_score IS NOT NULL AND ranking_score >= ?))
-        |          AND (
-        |            ? IS NULL
-        |            OR ticker LIKE '%' || ? || '%'
-        |            OR name LIKE '%' || ? || '%'
-        |          )
-        |        ORDER BY
-        |          CASE WHEN ranking_score IS NULL THEN 1 ELSE 0 END,
-        |          ranking_score DESC,
-        |          ticker ASC
+        |          AND (? IS NULL OR ranking_score >= ?)
+        |          AND (? IS NULL OR ticker LIKE '%' || ? || '%' OR name LIKE '%' || ? || '%')
+        |        ORDER BY ranking_score DESC 
         |        LIMIT ? OFFSET ?
-        |        
+        |    
         """.trimMargin()
     return performSuspending(__db, true, false) { _connection ->
       val _stmt: SQLiteStatement = _connection.prepare(_sql)
@@ -947,8 +939,8 @@ public class SnapshotDao_Impl(
         val _cursorIndexOfCompanyId: Int = getColumnIndexOrThrow(_stmt, "company_id")
         val _cursorIndexOfTicker: Int = getColumnIndexOrThrow(_stmt, "ticker")
         val _cursorIndexOfName: Int = getColumnIndexOrThrow(_stmt, "name")
-        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfSector: Int = getColumnIndexOrThrow(_stmt, "sector")
+        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfIsBist100: Int = getColumnIndexOrThrow(_stmt, "is_bist100")
         val _cursorIndexOfIsActive: Int = getColumnIndexOrThrow(_stmt, "is_active")
         val _cursorIndexOfFreeFloatPct: Int = getColumnIndexOrThrow(_stmt, "free_float_pct")
@@ -1009,17 +1001,17 @@ public class SnapshotDao_Impl(
           } else {
             _tmpName = _stmt.getText(_cursorIndexOfName)
           }
-          val _tmpType: String?
-          if (_stmt.isNull(_cursorIndexOfType)) {
-            _tmpType = null
-          } else {
-            _tmpType = _stmt.getText(_cursorIndexOfType)
-          }
           val _tmpSector: String?
           if (_stmt.isNull(_cursorIndexOfSector)) {
             _tmpSector = null
           } else {
             _tmpSector = _stmt.getText(_cursorIndexOfSector)
+          }
+          val _tmpType: String?
+          if (_stmt.isNull(_cursorIndexOfType)) {
+            _tmpType = null
+          } else {
+            _tmpType = _stmt.getText(_cursorIndexOfType)
           }
           val _tmpIsBist100: Int
           _tmpIsBist100 = _stmt.getLong(_cursorIndexOfIsBist100).toInt()
@@ -1240,7 +1232,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _item =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpType,_tmpSector,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
           _result.add(_item)
         }
         _result
@@ -1261,20 +1253,15 @@ public class SnapshotDao_Impl(
   ): Int {
     val _sql: String = """
         |
-        |        SELECT COUNT(*) FROM scoring_latest
-        |        WHERE
-        |          (? = 0 OR alpha_core_eligible = 1)
+        |        SELECT count(*) FROM scoring_latest 
+        |        WHERE (? = 0 OR alpha_core_eligible = 1)
         |          AND (? = 0 OR alpha_x_eligible = 1)
         |          AND (? = 0 OR is_bist100 = 1)
         |          AND (? IS NULL OR sector = ?)
         |          AND (? IS NULL OR risk = ?)
-        |          AND (? IS NULL OR (ranking_score IS NOT NULL AND ranking_score >= ?))
-        |          AND (
-        |            ? IS NULL
-        |            OR ticker LIKE '%' || ? || '%'
-        |            OR name LIKE '%' || ? || '%'
-        |          )
-        |        
+        |          AND (? IS NULL OR ranking_score >= ?)
+        |          AND (? IS NULL OR ticker LIKE '%' || ? || '%' OR name LIKE '%' || ? || '%')
+        |    
         """.trimMargin()
     return performSuspending(__db, true, false) { _connection ->
       val _stmt: SQLiteStatement = _connection.prepare(_sql)
@@ -1383,8 +1370,8 @@ public class SnapshotDao_Impl(
         val _cursorIndexOfCompanyId: Int = getColumnIndexOrThrow(_stmt, "company_id")
         val _cursorIndexOfTicker: Int = getColumnIndexOrThrow(_stmt, "ticker")
         val _cursorIndexOfName: Int = getColumnIndexOrThrow(_stmt, "name")
-        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfSector: Int = getColumnIndexOrThrow(_stmt, "sector")
+        val _cursorIndexOfType: Int = getColumnIndexOrThrow(_stmt, "type")
         val _cursorIndexOfIsBist100: Int = getColumnIndexOrThrow(_stmt, "is_bist100")
         val _cursorIndexOfIsActive: Int = getColumnIndexOrThrow(_stmt, "is_active")
         val _cursorIndexOfFreeFloatPct: Int = getColumnIndexOrThrow(_stmt, "free_float_pct")
@@ -1444,17 +1431,17 @@ public class SnapshotDao_Impl(
           } else {
             _tmpName = _stmt.getText(_cursorIndexOfName)
           }
-          val _tmpType: String?
-          if (_stmt.isNull(_cursorIndexOfType)) {
-            _tmpType = null
-          } else {
-            _tmpType = _stmt.getText(_cursorIndexOfType)
-          }
           val _tmpSector: String?
           if (_stmt.isNull(_cursorIndexOfSector)) {
             _tmpSector = null
           } else {
             _tmpSector = _stmt.getText(_cursorIndexOfSector)
+          }
+          val _tmpType: String?
+          if (_stmt.isNull(_cursorIndexOfType)) {
+            _tmpType = null
+          } else {
+            _tmpType = _stmt.getText(_cursorIndexOfType)
           }
           val _tmpIsBist100: Int
           _tmpIsBist100 = _stmt.getLong(_cursorIndexOfIsBist100).toInt()
@@ -1675,7 +1662,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _result =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpType,_tmpSector,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
         } else {
           _result = null
         }
@@ -2109,6 +2096,166 @@ public class SnapshotDao_Impl(
           }
           _item =
               PriceHistoryEntity(_tmpCompanyId,_tmpDate,_tmpOpen,_tmpHigh,_tmpLow,_tmpClose,_tmpVolume,_tmpAdjustedClose)
+          _result.add(_item)
+        }
+        _result
+      } finally {
+        _stmt.close()
+      }
+    }
+  }
+
+  public override suspend fun getSectorBenchmark(sector: String): SectorBenchmarkEntity? {
+    val _sql: String = "SELECT * FROM sector_benchmarks WHERE sector = ? LIMIT 1"
+    return performSuspending(__db, true, false) { _connection ->
+      val _stmt: SQLiteStatement = _connection.prepare(_sql)
+      try {
+        var _argIndex: Int = 1
+        _stmt.bindText(_argIndex, sector)
+        val _cursorIndexOfSector: Int = getColumnIndexOrThrow(_stmt, "sector")
+        val _cursorIndexOfRoeMedian: Int = getColumnIndexOrThrow(_stmt, "roe_median")
+        val _cursorIndexOfRoaMedian: Int = getColumnIndexOrThrow(_stmt, "roa_median")
+        val _cursorIndexOfNetMarginMedian: Int = getColumnIndexOrThrow(_stmt, "net_margin_median")
+        val _cursorIndexOfCompanyCount: Int = getColumnIndexOrThrow(_stmt, "company_count")
+        val _result: SectorBenchmarkEntity?
+        if (_stmt.step()) {
+          val _tmpSector: String
+          _tmpSector = _stmt.getText(_cursorIndexOfSector)
+          val _tmpRoeMedian: Double?
+          if (_stmt.isNull(_cursorIndexOfRoeMedian)) {
+            _tmpRoeMedian = null
+          } else {
+            _tmpRoeMedian = _stmt.getDouble(_cursorIndexOfRoeMedian)
+          }
+          val _tmpRoaMedian: Double?
+          if (_stmt.isNull(_cursorIndexOfRoaMedian)) {
+            _tmpRoaMedian = null
+          } else {
+            _tmpRoaMedian = _stmt.getDouble(_cursorIndexOfRoaMedian)
+          }
+          val _tmpNetMarginMedian: Double?
+          if (_stmt.isNull(_cursorIndexOfNetMarginMedian)) {
+            _tmpNetMarginMedian = null
+          } else {
+            _tmpNetMarginMedian = _stmt.getDouble(_cursorIndexOfNetMarginMedian)
+          }
+          val _tmpCompanyCount: Int?
+          if (_stmt.isNull(_cursorIndexOfCompanyCount)) {
+            _tmpCompanyCount = null
+          } else {
+            _tmpCompanyCount = _stmt.getLong(_cursorIndexOfCompanyCount).toInt()
+          }
+          _result =
+              SectorBenchmarkEntity(_tmpSector,_tmpRoeMedian,_tmpRoaMedian,_tmpNetMarginMedian,_tmpCompanyCount)
+        } else {
+          _result = null
+        }
+        _result
+      } finally {
+        _stmt.close()
+      }
+    }
+  }
+
+  public override suspend fun getFactorHistory(companyId: Int): List<FactorHistoryEntity> {
+    val _sql: String =
+        "SELECT * FROM factor_history_quarterly WHERE company_id = ? ORDER BY quarter_end"
+    return performSuspending(__db, true, false) { _connection ->
+      val _stmt: SQLiteStatement = _connection.prepare(_sql)
+      try {
+        var _argIndex: Int = 1
+        _stmt.bindLong(_argIndex, companyId.toLong())
+        val _cursorIndexOfCompanyId: Int = getColumnIndexOrThrow(_stmt, "company_id")
+        val _cursorIndexOfQuarterEnd: Int = getColumnIndexOrThrow(_stmt, "quarter_end")
+        val _cursorIndexOfScoringDate: Int = getColumnIndexOrThrow(_stmt, "scoring_date")
+        val _cursorIndexOfBuffett: Int = getColumnIndexOrThrow(_stmt, "buffett")
+        val _cursorIndexOfGraham: Int = getColumnIndexOrThrow(_stmt, "graham")
+        val _cursorIndexOfPiotroski: Int = getColumnIndexOrThrow(_stmt, "piotroski")
+        val _cursorIndexOfMagicFormula: Int = getColumnIndexOrThrow(_stmt, "magic_formula")
+        val _cursorIndexOfLynchPeg: Int = getColumnIndexOrThrow(_stmt, "lynch_peg")
+        val _cursorIndexOfDcfMos: Int = getColumnIndexOrThrow(_stmt, "dcf_mos")
+        val _cursorIndexOfMomentum: Int = getColumnIndexOrThrow(_stmt, "momentum")
+        val _cursorIndexOfTechnical: Int = getColumnIndexOrThrow(_stmt, "technical")
+        val _cursorIndexOfDividend: Int = getColumnIndexOrThrow(_stmt, "dividend")
+        val _cursorIndexOfCompositeAlpha: Int = getColumnIndexOrThrow(_stmt, "composite_alpha")
+        val _cursorIndexOfDataCompleteness: Int = getColumnIndexOrThrow(_stmt, "data_completeness")
+        val _result: MutableList<FactorHistoryEntity> = mutableListOf()
+        while (_stmt.step()) {
+          val _item: FactorHistoryEntity
+          val _tmpCompanyId: Int
+          _tmpCompanyId = _stmt.getLong(_cursorIndexOfCompanyId).toInt()
+          val _tmpQuarterEnd: String
+          _tmpQuarterEnd = _stmt.getText(_cursorIndexOfQuarterEnd)
+          val _tmpScoringDate: String
+          _tmpScoringDate = _stmt.getText(_cursorIndexOfScoringDate)
+          val _tmpBuffett: Double?
+          if (_stmt.isNull(_cursorIndexOfBuffett)) {
+            _tmpBuffett = null
+          } else {
+            _tmpBuffett = _stmt.getDouble(_cursorIndexOfBuffett)
+          }
+          val _tmpGraham: Double?
+          if (_stmt.isNull(_cursorIndexOfGraham)) {
+            _tmpGraham = null
+          } else {
+            _tmpGraham = _stmt.getDouble(_cursorIndexOfGraham)
+          }
+          val _tmpPiotroski: Double?
+          if (_stmt.isNull(_cursorIndexOfPiotroski)) {
+            _tmpPiotroski = null
+          } else {
+            _tmpPiotroski = _stmt.getDouble(_cursorIndexOfPiotroski)
+          }
+          val _tmpMagicFormula: Double?
+          if (_stmt.isNull(_cursorIndexOfMagicFormula)) {
+            _tmpMagicFormula = null
+          } else {
+            _tmpMagicFormula = _stmt.getDouble(_cursorIndexOfMagicFormula)
+          }
+          val _tmpLynchPeg: Double?
+          if (_stmt.isNull(_cursorIndexOfLynchPeg)) {
+            _tmpLynchPeg = null
+          } else {
+            _tmpLynchPeg = _stmt.getDouble(_cursorIndexOfLynchPeg)
+          }
+          val _tmpDcfMos: Double?
+          if (_stmt.isNull(_cursorIndexOfDcfMos)) {
+            _tmpDcfMos = null
+          } else {
+            _tmpDcfMos = _stmt.getDouble(_cursorIndexOfDcfMos)
+          }
+          val _tmpMomentum: Double?
+          if (_stmt.isNull(_cursorIndexOfMomentum)) {
+            _tmpMomentum = null
+          } else {
+            _tmpMomentum = _stmt.getDouble(_cursorIndexOfMomentum)
+          }
+          val _tmpTechnical: Double?
+          if (_stmt.isNull(_cursorIndexOfTechnical)) {
+            _tmpTechnical = null
+          } else {
+            _tmpTechnical = _stmt.getDouble(_cursorIndexOfTechnical)
+          }
+          val _tmpDividend: Double?
+          if (_stmt.isNull(_cursorIndexOfDividend)) {
+            _tmpDividend = null
+          } else {
+            _tmpDividend = _stmt.getDouble(_cursorIndexOfDividend)
+          }
+          val _tmpCompositeAlpha: Double?
+          if (_stmt.isNull(_cursorIndexOfCompositeAlpha)) {
+            _tmpCompositeAlpha = null
+          } else {
+            _tmpCompositeAlpha = _stmt.getDouble(_cursorIndexOfCompositeAlpha)
+          }
+          val _tmpDataCompleteness: Double?
+          if (_stmt.isNull(_cursorIndexOfDataCompleteness)) {
+            _tmpDataCompleteness = null
+          } else {
+            _tmpDataCompleteness = _stmt.getDouble(_cursorIndexOfDataCompleteness)
+          }
+          _item =
+              FactorHistoryEntity(_tmpCompanyId,_tmpQuarterEnd,_tmpScoringDate,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpTechnical,_tmpDividend,_tmpCompositeAlpha,_tmpDataCompleteness)
           _result.add(_item)
         }
         _result

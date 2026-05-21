@@ -234,6 +234,14 @@ data class FinancialsSnapshot(
     val relatedPartyRevenuePct: Double?,
 )
 
+data class SectorBenchmark(
+    val sector: String,
+    val roeMedian: Double?,
+    val roaMedian: Double?,
+    val netMarginMedian: Double?,
+    val companyCount: Int?,
+)
+
 data class StockDetail(
     val ticker: String,
     val name: String?,
@@ -259,6 +267,7 @@ data class StockDetail(
     val priceHistory: List<PricePoint>,
     val openPosition: OpenPosition?,
     val qualityFlags: List<String>,
+    val sectorBenchmark: SectorBenchmark?,
 )
 
 data class SnapshotInfo(

@@ -10,7 +10,7 @@ import java.io.File
  * Room sees the snapshot DB as a read-only resource.
  */
 @Database(
-    version = 8,
+    version = 10,
     exportSchema = false,
     entities = [
         SnapshotMetadataEntity::class,
@@ -19,8 +19,10 @@ import java.io.File
         PortfolioHistoryEntity::class,
         CompanyEntity::class,
         ScoringLatestEntity::class,
+        SectorBenchmarkEntity::class,
         AdjustedMetricsEntity::class,
         PriceHistoryEntity::class,
+        FactorHistoryEntity::class,
     ],
 )
 abstract class SnapshotDatabase : RoomDatabase() {

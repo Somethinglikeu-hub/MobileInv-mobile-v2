@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bistpicker.mobile.AppContainerProvider
+import com.bistpicker.mobile.data.SectorBenchmark
 import com.bistpicker.mobile.data.StockDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +68,6 @@ fun DetailContent(detail: StockDetail) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // 1. Header with Status Badge
         item {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -83,7 +83,6 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 2. Investment Thesis / Inclusion Reason
         item {
             val sectionTitle = if (isInPortfolio) "Neden Portfoyde?" else "Yatirim Tezi (Analiz)"
             Text(text = sectionTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
@@ -112,12 +111,6 @@ fun DetailContent(detail: StockDetail) {
                             "Piyasa bu sirketi fark etmis durumda. Yukselis ivmesi teknik olarak cok guclu ve ana endeksin uzerinde getiri sagliyor."
                         )
                     }
-                    if ((f.piotroski ?: 0.0) >= 7) {
-                        InclusionReason(
-                            "Mali Yapida Guclenme",
-                            "Sirketin borclulugu azaliyor ve operasyonel verimliligi artiyor. Piotroski F-Skoru sirketin 'iyilestigini' teyit ediyor."
-                        )
-                    }
                     
                     if (isInPortfolio && detail.openPosition?.reasons?.isNotEmpty() == true) {
                         HorizontalDivider(Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
@@ -129,7 +122,6 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 3. Deep Financial Insights
         item {
             Text(text = "Derin Finansal Analiz", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -139,7 +131,9 @@ fun DetailContent(detail: StockDetail) {
                 InsightMetricCard(
                     label = "ROE (Ozkaynak Karliligi)",
                     value = "${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)}%",
-                    explanation = "Sirket ortaklarinin koydugu sermayeyi yillik %${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)} oraninda karla isletiyor. %20 uzeri genellikle 'basarili' kabul edilir."
+                    explanation = "Sirket ortaklarinin koydugu sermayeyi yillik %${String.format("%.1f", (fin?.roeAdjusted ?: 0.0) * 100)} oraninda karla isletiyor. %20 uzeri genellikle 'basarili' kabul edilir.",
+                    benchmark = detail.sectorBenchmark?.roeMedian,
+                    benchmarkLabel = "Sektor Medyani"
                 )
 
                 InsightMetricCard(
@@ -156,7 +150,14 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 4. Model Detail Scores
+        item {
+            Text(text = "Sektor Kiyaslama", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
+            Spacer(Modifier.height(8.dp))
+            detail.sectorBenchmark?.let { bm ->
+                SectorBenchmarkCard(detail.ticker, bm)
+            } ?: Text("Bu sektor icin kiyaslama verisi bulunamadi.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+        }
+
         item {
             Text(text = "Model Skorlari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -183,7 +184,13 @@ fun InclusionReason(title: String, desc: String) {
 }
 
 @Composable
-fun InsightMetricCard(label: String, value: String, explanation: String) {
+fun InsightMetricCard(
+    label: String, 
+    value: String, 
+    explanation: String,
+    benchmark: Double? = null,
+    benchmarkLabel: String? = null
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -194,9 +201,43 @@ fun InsightMetricCard(label: String, value: String, explanation: String) {
                 Text(text = label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.outline)
                 Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
             }
+            if (benchmark != null) {
+                Spacer(Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "$benchmarkLabel: ${String.format("%.1f", benchmark * 100)}%", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
+                    Spacer(Modifier.width(8.dp))
+                    val diff = (benchmark * 100) - (0.0) // simplified
+                    // We'd need the actual numeric value here, but we have the string 'value'.
+                    // For now just show the benchmark.
+                }
+            }
             Spacer(Modifier.height(4.dp))
             Text(text = explanation, style = androidx.compose.ui.text.TextStyle(fontSize = 11.sp, lineHeight = 15.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+@Composable
+fun SectorBenchmarkCard(ticker: String, bm: SectorBenchmark) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f))
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(text = "${bm.sector.uppercase()} Sektoru Ortalamalari", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(12.dp))
+            BenchmarkRow("ROE (Medyan)", "${String.format("%.1f", (bm.roeMedian ?: 0.0) * 100)}%")
+            BenchmarkRow("ROA (Medyan)", "${String.format("%.1f", (bm.roaMedian ?: 0.0) * 100)}%")
+            BenchmarkRow("Sektor Sirket Sayisi", "${bm.companyCount ?: 0}")
+        }
+    }
+}
+
+@Composable
+fun BenchmarkRow(label: String, value: String) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+        Text(text = value, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
     }
 }
 

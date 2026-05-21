@@ -5,10 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 // All entities mirror the SQLite tables produced by Python's
-// `bist_picker.mobile_snapshot.export_mobile_snapshot()`. The APK never
-// writes through Room — Room is read-only against the snapshot DB that
-// SnapshotApplier swaps in. So we don't bother with foreign keys or
-// indices here; the snapshot ships with its own primary keys.
+// `bist_picker.mobile_snapshot` script.
 
 @Entity(tableName = "snapshot_metadata")
 data class SnapshotMetadataEntity(
@@ -104,13 +101,12 @@ data class ScoringLatestEntity(
     @PrimaryKey @ColumnInfo("company_id") val companyId: Int,
     val ticker: String,
     val name: String?,
-    val type: String?,
     val sector: String?,
+    val type: String?,
     @ColumnInfo("is_bist100") val isBist100: Int,
     @ColumnInfo("is_active") val isActive: Int,
     @ColumnInfo("free_float_pct") val freeFloatPct: Double?,
     @ColumnInfo("avg_volume_try") val avgVolumeTry: Double?,
-    // v2 ranking surface
     @ColumnInfo("ranking_score") val rankingScore: Double?,
     @ColumnInfo("ranking_source") val rankingSource: String?,
     @ColumnInfo("model_score") val modelScore: Double?,
@@ -148,9 +144,16 @@ data class ScoringLatestEntity(
     @ColumnInfo("dcf_terminal_growth_pct") val dcfTerminalGrowthPct: Double?,
 )
 
-@Entity(
-    tableName = "adjusted_metrics_latest",
+@Entity(tableName = "sector_benchmarks")
+data class SectorBenchmarkEntity(
+    @PrimaryKey val sector: String,
+    @ColumnInfo("roe_median") val roeMedian: Double?,
+    @ColumnInfo("roa_median") val roaMedian: Double?,
+    @ColumnInfo("net_margin_median") val netMarginMedian: Double?,
+    @ColumnInfo("company_count") val companyCount: Int?,
 )
+
+@Entity(tableName = "adjusted_metrics_latest")
 data class AdjustedMetricsEntity(
     @PrimaryKey @ColumnInfo("company_id") val companyId: Int,
     @ColumnInfo("period_end") val periodEnd: String?,
@@ -168,10 +171,7 @@ data class AdjustedMetricsEntity(
     @ColumnInfo("growth_capex") val growthCapex: Double?,
 )
 
-@Entity(
-    tableName = "price_history_730d",
-    primaryKeys = ["company_id", "date"],
-)
+@Entity(tableName = "price_history_730d", primaryKeys = ["company_id", "date"])
 data class PriceHistoryEntity(
     @ColumnInfo("company_id") val companyId: Int,
     val date: String,
@@ -183,11 +183,7 @@ data class PriceHistoryEntity(
     @ColumnInfo("adjusted_close") val adjustedClose: Double?,
 )
 
-// v2 §5 (Sprint 2): quarter-end factor history for sparkline UI.
-@Entity(
-    tableName = "factor_history_quarterly",
-    primaryKeys = ["company_id", "quarter_end"],
-)
+@Entity(tableName = "factor_history_quarterly", primaryKeys = ["company_id", "quarter_end"])
 data class FactorHistoryEntity(
     @ColumnInfo("company_id") val companyId: Int,
     @ColumnInfo("quarter_end") val quarterEnd: String,
