@@ -102,4 +102,7 @@ interface SnapshotDao {
 
     @Query("SELECT * FROM factor_history_quarterly WHERE company_id = :companyId ORDER BY quarter_end")
     suspend fun getFactorHistory(companyId: Int): List<FactorHistoryEntity>
+
+    @Query("SELECT * FROM model_performance ORDER BY date")
+    fun observeModelPerformance(): Flow<List<ModelPerformanceEntity>>
 }

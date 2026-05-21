@@ -11,10 +11,17 @@ import com.bistpicker.mobile.data.sync.SnapshotSyncStateStore
 import com.bistpicker.mobile.data.sync.SyncState
 import kotlinx.coroutines.flow.*
 
+import kotlinx.coroutines.launch
+
 class HomeViewModel(
     private val repository: BistRepository,
     private val syncStore: SnapshotSyncStateStore
 ) : ViewModel() {
+
+    init {
+        // Initial live price fetch
+        refresh()
+    }
 
     val uiState: StateFlow<HomeUiState> = combine(
         repository.observeHome(),
@@ -31,6 +38,14 @@ class HomeViewModel(
 
     fun refresh() {
         Log.d("HomeViewModel", "Manual refresh triggered")
+        viewModelScope.launch {
+            // Wait for initial data if needed
+            val homeData = repository.observeHome().first()
+            val tickers = (homeData.openPositions.map { it.ticker } + homeData.suggestions.map { it.ticker }).distinct()
+            if (tickers.isNotEmpty()) {
+                repository.refreshLivePrices(tickers)
+            }
+        }
     }
 
     class Factory(

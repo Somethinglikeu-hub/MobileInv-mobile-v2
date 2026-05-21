@@ -201,3 +201,11 @@ data class FactorHistoryEntity(
     @ColumnInfo("composite_alpha") val compositeAlpha: Double?,
     @ColumnInfo("data_completeness") val dataCompleteness: Double?,
 )
+
+@Entity(tableName = "model_performance")
+data class ModelPerformanceEntity(
+    @PrimaryKey val date: String,
+    @ColumnInfo("strategy_return") val strategyReturn: Double?,
+    @ColumnInfo("benchmark_return") val benchmarkReturn: Double?,
+    val alpha: Double?,
+)

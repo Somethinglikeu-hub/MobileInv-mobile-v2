@@ -196,12 +196,20 @@ fun PositionCardSmall(position: OpenPosition, onClick: () -> Unit) {
     ) {
         Row(Modifier.padding(10.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text(position.ticker, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Black)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(position.ticker, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Black)
+                    if (position.isLive) {
+                        Spacer(Modifier.width(8.dp))
+                        Surface(color = Color(0xFFE91E63), shape = MaterialTheme.shapes.extraSmall) {
+                            Text("CANLI", modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp), color = Color.White, style = androidx.compose.ui.text.TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black))
+                        }
+                    }
+                }
                 Text(position.name ?: "", style = androidx.compose.ui.text.TextStyle(fontSize = 10.sp), color = MaterialTheme.colorScheme.outline, maxLines = 1)
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text("${position.currentPrice ?: 0.0} TL", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
-                val pnl = (position.pnlPct ?: 0.0) * 100
+                val pnl = position.pnlPct ?: 0.0
                 Text(
                     "${if (pnl >= 0) "+" else ""}${String.format("%.1f", pnl)}%",
                     color = if (pnl >= 0) Color(0xFF4CAF50) else Color(0xFFF44336),

@@ -19,4 +19,7 @@ interface BistRepository {
     suspend fun loadFilterOptions(): FilterOptions
 
     suspend fun loadDetail(ticker: String): StockDetail?
+
+    /** Refresh in-memory live prices for the given tickers. */
+    suspend fun refreshLivePrices(tickers: List<String>)
 }

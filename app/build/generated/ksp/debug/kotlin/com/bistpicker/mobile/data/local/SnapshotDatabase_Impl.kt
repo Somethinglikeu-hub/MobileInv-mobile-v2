@@ -33,8 +33,8 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
 
 
   protected override fun createOpenDelegate(): RoomOpenDelegate {
-    val _openDelegate: RoomOpenDelegate = object : RoomOpenDelegate(10,
-        "8a2f316c5007cf64db479ccbae637311", "c66d43d0fd5dffec7d166edd51a7fb5a") {
+    val _openDelegate: RoomOpenDelegate = object : RoomOpenDelegate(11,
+        "5a1de69f9f56fbc95f373c3c16255d11", "f5f06d1436e81b17bf65c6681c1e4948") {
       public override fun createAllTables(connection: SQLiteConnection) {
         connection.execSQL("CREATE TABLE IF NOT EXISTS `snapshot_metadata` (`id` INTEGER NOT NULL, `schema_version` INTEGER NOT NULL, `exported_at` TEXT NOT NULL, `snapshot_date` TEXT, `latest_price_date` TEXT, `source_db_path` TEXT, `company_count` INTEGER NOT NULL, `scoring_row_count` INTEGER NOT NULL, `price_history_days` INTEGER NOT NULL, PRIMARY KEY(`id`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `home_summary` (`id` INTEGER NOT NULL, `total_return_avg` REAL, `active_return_avg` REAL, `win_rate` REAL, `benchmark_ytd` REAL, `macro_date` TEXT, `policy_rate_pct` REAL, `cpi_yoy_pct` REAL, `usdtry_rate` REAL, `regime` TEXT, `cash_state` TEXT, `cash_pct` REAL, `cash_days_in_state` INTEGER, `cash_last_transition_date` TEXT, `cash_target_state` TEXT, `cash_notes` TEXT, `cash_raw_signal` INTEGER, PRIMARY KEY(`id`))")
@@ -46,8 +46,9 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
         connection.execSQL("CREATE TABLE IF NOT EXISTS `adjusted_metrics_latest` (`company_id` INTEGER NOT NULL, `period_end` TEXT, `reported_net_income` REAL, `monetary_gain_loss` REAL, `adjusted_net_income` REAL, `owner_earnings` REAL, `free_cash_flow` REAL, `roe_adjusted` REAL, `roa_adjusted` REAL, `eps_adjusted` REAL, `real_eps_growth_pct` REAL, `related_party_revenue_pct` REAL, `maintenance_capex` REAL, `growth_capex` REAL, PRIMARY KEY(`company_id`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `price_history_730d` (`company_id` INTEGER NOT NULL, `date` TEXT NOT NULL, `open` REAL, `high` REAL, `low` REAL, `close` REAL, `volume` INTEGER, `adjusted_close` REAL, PRIMARY KEY(`company_id`, `date`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS `factor_history_quarterly` (`company_id` INTEGER NOT NULL, `quarter_end` TEXT NOT NULL, `scoring_date` TEXT NOT NULL, `buffett` REAL, `graham` REAL, `piotroski` REAL, `magic_formula` REAL, `lynch_peg` REAL, `dcf_mos` REAL, `momentum` REAL, `technical` REAL, `dividend` REAL, `composite_alpha` REAL, `data_completeness` REAL, PRIMARY KEY(`company_id`, `quarter_end`))")
+        connection.execSQL("CREATE TABLE IF NOT EXISTS `model_performance` (`date` TEXT NOT NULL, `strategy_return` REAL, `benchmark_return` REAL, `alpha` REAL, PRIMARY KEY(`date`))")
         connection.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)")
-        connection.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8a2f316c5007cf64db479ccbae637311')")
+        connection.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5a1de69f9f56fbc95f373c3c16255d11')")
       }
 
       public override fun dropAllTables(connection: SQLiteConnection) {
@@ -61,6 +62,7 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
         connection.execSQL("DROP TABLE IF EXISTS `adjusted_metrics_latest`")
         connection.execSQL("DROP TABLE IF EXISTS `price_history_730d`")
         connection.execSQL("DROP TABLE IF EXISTS `factor_history_quarterly`")
+        connection.execSQL("DROP TABLE IF EXISTS `model_performance`")
       }
 
       public override fun onCreate(connection: SQLiteConnection) {
@@ -553,6 +555,29 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
               | Found:
               |""".trimMargin() + _existingFactorHistoryQuarterly)
         }
+        val _columnsModelPerformance: MutableMap<String, TableInfo.Column> = mutableMapOf()
+        _columnsModelPerformance.put("date", TableInfo.Column("date", "TEXT", true, 1, null,
+            TableInfo.CREATED_FROM_ENTITY))
+        _columnsModelPerformance.put("strategy_return", TableInfo.Column("strategy_return", "REAL",
+            false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsModelPerformance.put("benchmark_return", TableInfo.Column("benchmark_return",
+            "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY))
+        _columnsModelPerformance.put("alpha", TableInfo.Column("alpha", "REAL", false, 0, null,
+            TableInfo.CREATED_FROM_ENTITY))
+        val _foreignKeysModelPerformance: MutableSet<TableInfo.ForeignKey> = mutableSetOf()
+        val _indicesModelPerformance: MutableSet<TableInfo.Index> = mutableSetOf()
+        val _infoModelPerformance: TableInfo = TableInfo("model_performance",
+            _columnsModelPerformance, _foreignKeysModelPerformance, _indicesModelPerformance)
+        val _existingModelPerformance: TableInfo = read(connection, "model_performance")
+        if (!_infoModelPerformance.equals(_existingModelPerformance)) {
+          return RoomOpenDelegate.ValidationResult(false, """
+              |model_performance(com.bistpicker.mobile.data.local.ModelPerformanceEntity).
+              | Expected:
+              |""".trimMargin() + _infoModelPerformance + """
+              |
+              | Found:
+              |""".trimMargin() + _existingModelPerformance)
+        }
         return RoomOpenDelegate.ValidationResult(true, null)
       }
     }
@@ -565,13 +590,14 @@ public class SnapshotDatabase_Impl : SnapshotDatabase() {
     return InvalidationTracker(this, _shadowTablesMap, _viewTables, "snapshot_metadata",
         "home_summary", "open_positions", "portfolio_history", "companies", "scoring_latest",
         "sector_benchmarks", "adjusted_metrics_latest", "price_history_730d",
-        "factor_history_quarterly")
+        "factor_history_quarterly", "model_performance")
   }
 
   public override fun clearAllTables() {
     super.performClear(false, "snapshot_metadata", "home_summary", "open_positions",
         "portfolio_history", "companies", "scoring_latest", "sector_benchmarks",
-        "adjusted_metrics_latest", "price_history_730d", "factor_history_quarterly")
+        "adjusted_metrics_latest", "price_history_730d", "factor_history_quarterly",
+        "model_performance")
   }
 
   protected override fun getRequiredTypeConverterClasses(): Map<KClass<*>, List<KClass<*>>> {

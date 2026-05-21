@@ -2286,6 +2286,48 @@ public class SnapshotDao_Impl(
     }
   }
 
+  public override fun observeModelPerformance(): Flow<List<ModelPerformanceEntity>> {
+    val _sql: String = "SELECT * FROM model_performance ORDER BY date"
+    return createFlow(__db, false, arrayOf("model_performance")) { _connection ->
+      val _stmt: SQLiteStatement = _connection.prepare(_sql)
+      try {
+        val _cursorIndexOfDate: Int = getColumnIndexOrThrow(_stmt, "date")
+        val _cursorIndexOfStrategyReturn: Int = getColumnIndexOrThrow(_stmt, "strategy_return")
+        val _cursorIndexOfBenchmarkReturn: Int = getColumnIndexOrThrow(_stmt, "benchmark_return")
+        val _cursorIndexOfAlpha: Int = getColumnIndexOrThrow(_stmt, "alpha")
+        val _result: MutableList<ModelPerformanceEntity> = mutableListOf()
+        while (_stmt.step()) {
+          val _item: ModelPerformanceEntity
+          val _tmpDate: String
+          _tmpDate = _stmt.getText(_cursorIndexOfDate)
+          val _tmpStrategyReturn: Double?
+          if (_stmt.isNull(_cursorIndexOfStrategyReturn)) {
+            _tmpStrategyReturn = null
+          } else {
+            _tmpStrategyReturn = _stmt.getDouble(_cursorIndexOfStrategyReturn)
+          }
+          val _tmpBenchmarkReturn: Double?
+          if (_stmt.isNull(_cursorIndexOfBenchmarkReturn)) {
+            _tmpBenchmarkReturn = null
+          } else {
+            _tmpBenchmarkReturn = _stmt.getDouble(_cursorIndexOfBenchmarkReturn)
+          }
+          val _tmpAlpha: Double?
+          if (_stmt.isNull(_cursorIndexOfAlpha)) {
+            _tmpAlpha = null
+          } else {
+            _tmpAlpha = _stmt.getDouble(_cursorIndexOfAlpha)
+          }
+          _item = ModelPerformanceEntity(_tmpDate,_tmpStrategyReturn,_tmpBenchmarkReturn,_tmpAlpha)
+          _result.add(_item)
+        }
+        _result
+      } finally {
+        _stmt.close()
+      }
+    }
+  }
+
   public companion object {
     public fun getRequiredConverters(): List<KClass<*>> = emptyList()
   }

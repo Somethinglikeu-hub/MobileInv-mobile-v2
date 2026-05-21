@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bistpicker.mobile.AppContainerProvider
 import com.bistpicker.mobile.data.SectorBenchmark
 import com.bistpicker.mobile.data.StockDetail
+import com.bistpicker.mobile.data.TradeAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +69,7 @@ fun DetailContent(detail: StockDetail) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+        // 1. Header with Status Badge & Smart Signal
         item {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -80,9 +82,26 @@ fun DetailContent(detail: StockDetail) {
                     }
                 }
                 Text(text = detail.name ?: "", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
+                
+                // Smart Signal Reason (if any)
+                detail.suggestedAction?.let { action ->
+                    if (action.action == TradeAction.SELL) {
+                        Spacer(Modifier.height(12.dp))
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f))
+                        ) {
+                            Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Text("ZEKI SINYAL: SAT", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelMedium)
+                                Spacer(Modifier.width(12.dp))
+                                Text(action.reason ?: "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onErrorContainer)
+                            }
+                        }
+                    }
+                }
             }
         }
 
+        // 2. Investment Thesis / Inclusion Reason
         item {
             val sectionTitle = if (isInPortfolio) "Neden Portfoyde?" else "Yatirim Tezi (Analiz)"
             Text(text = sectionTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
@@ -130,6 +149,7 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
+        // 3. Deep Financial Insights
         item {
             Text(text = "Derin Finansal Analiz", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -158,6 +178,7 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
+        // 4. Sectoral Benchmark
         item {
             Text(text = "Sektor Kiyaslama", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -166,6 +187,7 @@ fun DetailContent(detail: StockDetail) {
             } ?: Text("Bu sektor icin kiyaslama verisi bulunamadi.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
         }
 
+        // 5. Model Detail Scores
         item {
             Text(text = "Model Skorlari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -213,10 +235,6 @@ fun InsightMetricCard(
                 Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "$benchmarkLabel: ${String.format("%.1f", benchmark * 100)}%", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
-                    Spacer(Modifier.width(8.dp))
-                    val diff = (benchmark * 100) - (0.0) // simplified
-                    // We'd need the actual numeric value here, but we have the string 'value'.
-                    // For now just show the benchmark.
                 }
             }
             Spacer(Modifier.height(4.dp))

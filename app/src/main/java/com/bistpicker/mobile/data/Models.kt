@@ -115,6 +115,7 @@ data class OpenPosition(
     val reasons: List<ReasonFactor>,
     val qualityFlags: List<String>,
     val dcfMosPct: Double?,
+    val isLive: Boolean = false,
 )
 
 data class ClosedPosition(
@@ -137,6 +138,13 @@ data class SuggestedAction(
     val reason: String?,
 )
 
+data class ModelPerformancePoint(
+    val date: String,
+    val strategyReturn: Double,
+    val benchmarkReturn: Double,
+    val alpha: Double,
+)
+
 data class HomeData(
     val macro: HomeMacro?,
     val cash: HomeCash?,
@@ -144,6 +152,7 @@ data class HomeData(
     val openPositions: List<OpenPosition>,
     val history: List<ClosedPosition>,
     val suggestions: List<SuggestedAction>,
+    val modelPerformance: List<ModelPerformancePoint>,
     val weekStart: String?,
     val weekEnd: String?,
 )
@@ -269,6 +278,7 @@ data class StockDetail(
     val openPosition: OpenPosition?,
     val qualityFlags: List<String>,
     val sectorBenchmark: SectorBenchmark?,
+    val suggestedAction: SuggestedAction? = null,
 )
 
 data class SnapshotInfo(
