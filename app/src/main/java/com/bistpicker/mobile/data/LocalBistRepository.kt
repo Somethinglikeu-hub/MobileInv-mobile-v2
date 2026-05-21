@@ -164,6 +164,7 @@ class LocalBistRepository(
             alphaXScore = score.alphaXScore,
             alphaXRank = score.alphaXRank?.toInt(),
             researchBucket = ResearchBucket.fromString(score.alphaResearchBucket),
+            aiInsight = score.aiInsight,
             alphaReason = score.alphaReason,
             primaryBlocker = score.alphaPrimaryBlocker,
             streak = score.alphaSnapshotStreak,

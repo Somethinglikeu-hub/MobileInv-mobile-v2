@@ -118,6 +118,14 @@ fun DetailContent(detail: StockDetail) {
                             Text(text = "• ${reason.label}: ${String.format("%.1f", reason.value)}", style = MaterialTheme.typography.bodySmall)
                         }
                     }
+
+                    detail.aiInsight?.let { insight ->
+                        HorizontalDivider(Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("AI Analiz: ", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                            Text(text = insight, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
                 }
             }
         }

@@ -120,6 +120,7 @@ data class ScoringLatestEntity(
     @ColumnInfo("alpha_primary_blocker") val alphaPrimaryBlocker: String?,
     @ColumnInfo("alpha_research_bucket") val alphaResearchBucket: String?,
     @ColumnInfo("alpha_snapshot_streak") val alphaSnapshotStreak: Int?,
+    @ColumnInfo("ai_insight") val aiInsight: String?,
     val risk: String?,
     @ColumnInfo("data_completeness") val dataCompleteness: Double?,
     @ColumnInfo("scoring_date") val scoringDate: String?,

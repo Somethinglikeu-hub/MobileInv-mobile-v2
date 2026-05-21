@@ -255,6 +255,7 @@ data class StockDetail(
     val alphaXScore: Double?,
     val alphaXRank: Int?,
     val researchBucket: ResearchBucket,
+    val aiInsight: String?,
     val alphaReason: String?,
     val primaryBlocker: String?,
     val streak: Int?,

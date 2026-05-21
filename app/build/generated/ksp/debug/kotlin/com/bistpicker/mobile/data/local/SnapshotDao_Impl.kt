@@ -564,6 +564,7 @@ public class SnapshotDao_Impl(
             "alpha_research_bucket")
         val _cursorIndexOfAlphaSnapshotStreak: Int = getColumnIndexOrThrow(_stmt,
             "alpha_snapshot_streak")
+        val _cursorIndexOfAiInsight: Int = getColumnIndexOrThrow(_stmt, "ai_insight")
         val _cursorIndexOfRisk: Int = getColumnIndexOrThrow(_stmt, "risk")
         val _cursorIndexOfDataCompleteness: Int = getColumnIndexOrThrow(_stmt, "data_completeness")
         val _cursorIndexOfScoringDate: Int = getColumnIndexOrThrow(_stmt, "scoring_date")
@@ -701,6 +702,12 @@ public class SnapshotDao_Impl(
           } else {
             _tmpAlphaSnapshotStreak = _stmt.getLong(_cursorIndexOfAlphaSnapshotStreak).toInt()
           }
+          val _tmpAiInsight: String?
+          if (_stmt.isNull(_cursorIndexOfAiInsight)) {
+            _tmpAiInsight = null
+          } else {
+            _tmpAiInsight = _stmt.getText(_cursorIndexOfAiInsight)
+          }
           val _tmpRisk: String?
           if (_stmt.isNull(_cursorIndexOfRisk)) {
             _tmpRisk = null
@@ -834,7 +841,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _item =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpAiInsight,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
           _result.add(_item)
         }
         _result
@@ -962,6 +969,7 @@ public class SnapshotDao_Impl(
             "alpha_research_bucket")
         val _cursorIndexOfAlphaSnapshotStreak: Int = getColumnIndexOrThrow(_stmt,
             "alpha_snapshot_streak")
+        val _cursorIndexOfAiInsight: Int = getColumnIndexOrThrow(_stmt, "ai_insight")
         val _cursorIndexOfRisk: Int = getColumnIndexOrThrow(_stmt, "risk")
         val _cursorIndexOfDataCompleteness: Int = getColumnIndexOrThrow(_stmt, "data_completeness")
         val _cursorIndexOfScoringDate: Int = getColumnIndexOrThrow(_stmt, "scoring_date")
@@ -1099,6 +1107,12 @@ public class SnapshotDao_Impl(
           } else {
             _tmpAlphaSnapshotStreak = _stmt.getLong(_cursorIndexOfAlphaSnapshotStreak).toInt()
           }
+          val _tmpAiInsight: String?
+          if (_stmt.isNull(_cursorIndexOfAiInsight)) {
+            _tmpAiInsight = null
+          } else {
+            _tmpAiInsight = _stmt.getText(_cursorIndexOfAiInsight)
+          }
           val _tmpRisk: String?
           if (_stmt.isNull(_cursorIndexOfRisk)) {
             _tmpRisk = null
@@ -1232,7 +1246,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _item =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpAiInsight,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
           _result.add(_item)
         }
         _result
@@ -1393,6 +1407,7 @@ public class SnapshotDao_Impl(
             "alpha_research_bucket")
         val _cursorIndexOfAlphaSnapshotStreak: Int = getColumnIndexOrThrow(_stmt,
             "alpha_snapshot_streak")
+        val _cursorIndexOfAiInsight: Int = getColumnIndexOrThrow(_stmt, "ai_insight")
         val _cursorIndexOfRisk: Int = getColumnIndexOrThrow(_stmt, "risk")
         val _cursorIndexOfDataCompleteness: Int = getColumnIndexOrThrow(_stmt, "data_completeness")
         val _cursorIndexOfScoringDate: Int = getColumnIndexOrThrow(_stmt, "scoring_date")
@@ -1529,6 +1544,12 @@ public class SnapshotDao_Impl(
           } else {
             _tmpAlphaSnapshotStreak = _stmt.getLong(_cursorIndexOfAlphaSnapshotStreak).toInt()
           }
+          val _tmpAiInsight: String?
+          if (_stmt.isNull(_cursorIndexOfAiInsight)) {
+            _tmpAiInsight = null
+          } else {
+            _tmpAiInsight = _stmt.getText(_cursorIndexOfAiInsight)
+          }
           val _tmpRisk: String?
           if (_stmt.isNull(_cursorIndexOfRisk)) {
             _tmpRisk = null
@@ -1662,7 +1683,7 @@ public class SnapshotDao_Impl(
             _tmpDcfTerminalGrowthPct = _stmt.getDouble(_cursorIndexOfDcfTerminalGrowthPct)
           }
           _result =
-              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
+              ScoringLatestEntity(_tmpCompanyId,_tmpTicker,_tmpName,_tmpSector,_tmpType,_tmpIsBist100,_tmpIsActive,_tmpFreeFloatPct,_tmpAvgVolumeTry,_tmpRankingScore,_tmpRankingSource,_tmpModelScore,_tmpAlpha,_tmpAlphaXScore,_tmpAlphaXRank,_tmpAlphaXConfidence,_tmpAlphaCoreEligible,_tmpAlphaXEligible,_tmpAlphaReason,_tmpAlphaPrimaryBlocker,_tmpAlphaResearchBucket,_tmpAlphaSnapshotStreak,_tmpAiInsight,_tmpRisk,_tmpDataCompleteness,_tmpScoringDate,_tmpModelUsed,_tmpBuffett,_tmpGraham,_tmpPiotroski,_tmpPiotroskiRaw,_tmpMagicFormula,_tmpLynchPeg,_tmpDcfMos,_tmpMomentum,_tmpInsider,_tmpTechnical,_tmpDividend,_tmpBeta,_tmpDelta,_tmpQualityFlagsJson,_tmpDcfIntrinsicValue,_tmpDcfGrowthRatePct,_tmpDcfDiscountRatePct,_tmpDcfTerminalGrowthPct)
         } else {
           _result = null
         }
