@@ -17,18 +17,26 @@ class DetailViewModel(
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
     init {
-        loadDetail()
+        observeDetail()
+        refreshLivePrices()
     }
 
-    private fun loadDetail() {
+    private fun observeDetail() {
         viewModelScope.launch {
-            _uiState.value = DetailUiState.Loading
-            val detail = repository.loadDetail(ticker)
-            if (detail != null) {
-                _uiState.value = DetailUiState.Success(detail)
-            } else {
-                _uiState.value = DetailUiState.Error("Hisse bulunamadi")
-            }
+            repository.observeDetail(ticker)
+                .collect { detail ->
+                    if (detail != null) {
+                        _uiState.value = DetailUiState.Success(detail)
+                    } else {
+                        _uiState.value = DetailUiState.Error("Hisse bulunamadi")
+                    }
+                }
+        }
+    }
+
+    private fun refreshLivePrices() {
+        viewModelScope.launch {
+            repository.refreshLivePrices(listOf(ticker))
         }
     }
 

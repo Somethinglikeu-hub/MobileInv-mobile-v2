@@ -1,5 +1,6 @@
 package com.bistpicker.mobile.data
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -60,6 +61,15 @@ enum class ResearchBucket(val displayKey: String) {
 /** Toolbar / segmented filter for the Liste screen. */
 enum class ScoringViewMode { ALPHA_CORE, ALPHA_X, RESEARCH, MODEL, ALL }
 
+enum class ScoringSortOrder(val displayName: String) {
+    SCORE_DESC("Skor (En Yüksek)"),
+    SCORE_ASC("Skor (En Düşük)"),
+    TICKER_ASC("Hisse Kodu (A-Z)"),
+    TICKER_DESC("Hisse Kodu (Z-A)"),
+    RISK_ASC("Risk (Düşükten Yükseğe)"),
+    RISK_DESC("Risk (Yüksekten Düşüğe)")
+}
+
 data class ScoringFilters(
     val mode: ScoringViewMode = ScoringViewMode.ALPHA_CORE,
     val sector: String? = null,
@@ -67,8 +77,10 @@ data class ScoringFilters(
     val onlyBist100: Boolean = false,
     val minScore: Double? = null,
     val search: String? = null,
+    val sortBy: ScoringSortOrder = ScoringSortOrder.SCORE_DESC,
 )
 
+@Immutable
 @Serializable
 data class ReasonFactor(
     val factor: String,
@@ -76,6 +88,7 @@ data class ReasonFactor(
     val value: Double,
 )
 
+@Immutable
 data class HomeMacro(
     val date: String?,
     val policyRatePct: Double?,
@@ -84,6 +97,7 @@ data class HomeMacro(
     val regime: String?,
 )
 
+@Immutable
 data class HomeCash(
     val state: CashState,
     val cashPct: Double?,
@@ -93,6 +107,7 @@ data class HomeCash(
     val rawSignal: Int?,
 )
 
+@Immutable
 data class HomePerformance(
     val totalReturnAvg: Double?,
     val activeReturnAvg: Double?,
@@ -100,12 +115,14 @@ data class HomePerformance(
     val benchmarkYtd: Double?,
 )
 
+@Immutable
 data class OpenPosition(
     val ticker: String,
     val name: String?,
     val portfolio: String?,
     val entryPrice: Double?,
     val currentPrice: Double?,
+    val snapshotPrice: Double? = null,
     val pnlPct: Double?,
     val targetPrice: Double?,
     val stopLossPrice: Double?,
@@ -118,6 +135,7 @@ data class OpenPosition(
     val isLive: Boolean = false,
 )
 
+@Immutable
 data class ClosedPosition(
     val ticker: String,
     val name: String?,
@@ -132,12 +150,14 @@ data class ClosedPosition(
 
 enum class TradeAction { BUY, SELL, HOLD }
 
+@Immutable
 data class SuggestedAction(
     val ticker: String,
     val action: TradeAction,
     val reason: String?,
 )
 
+@Immutable
 data class ModelPerformancePoint(
     val date: String,
     val strategyReturn: Double,
@@ -145,6 +165,7 @@ data class ModelPerformancePoint(
     val alpha: Double,
 )
 
+@Immutable
 data class HomeData(
     val macro: HomeMacro?,
     val cash: HomeCash?,
@@ -155,6 +176,7 @@ data class HomeData(
     val modelPerformance: List<ModelPerformancePoint>,
     val weekStart: String?,
     val weekEnd: String?,
+    val weeklyPerformance: List<WeeklyPerformanceRecord> = emptyList(),
 )
 
 data class ScoringRow(
@@ -234,6 +256,7 @@ data class FinancialsSnapshot(
     val periodEnd: String?,
     val reportedNetIncome: Double?,
     val adjustedNetIncome: Double?,
+    val monetaryGainLoss: Double?,
     val ownerEarnings: Double?,
     val freeCashFlow: Double?,
     val roeAdjusted: Double?,
@@ -279,6 +302,11 @@ data class StockDetail(
     val qualityFlags: List<String>,
     val sectorBenchmark: SectorBenchmark?,
     val suggestedAction: SuggestedAction? = null,
+    val stopLossPrice: Double? = null,
+    val targetPrice: Double? = null,
+    val isLive: Boolean = false,
+    val currentPrice: Double? = null,
+    val snapshotPrice: Double? = null,
 )
 
 data class SnapshotInfo(

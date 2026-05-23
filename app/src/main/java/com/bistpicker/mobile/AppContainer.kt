@@ -5,6 +5,7 @@ import com.bistpicker.mobile.data.BistRepository
 import com.bistpicker.mobile.data.LocalBistRepository
 import com.bistpicker.mobile.data.local.SnapshotDao
 import com.bistpicker.mobile.data.local.SnapshotDatabase
+import com.bistpicker.mobile.data.api.LivePriceClient
 import com.bistpicker.mobile.data.sync.SnapshotApplier
 import com.bistpicker.mobile.data.sync.SnapshotFeedClient
 import com.bistpicker.mobile.data.sync.SnapshotSyncStateStore
@@ -71,15 +72,20 @@ class DefaultAppContainer(
 
     override val syncState: SnapshotSyncStateStore = SnapshotSyncStateStore(appContext)
 
+    private val livePriceClient = LivePriceClient(httpClient, json)
+
     override val repository: BistRepository = LocalBistRepository(
+        context = appContext,
         daoProvider = ::activeDao,
         json = json,
+        livePriceClient = livePriceClient,
     )
 
     @Synchronized
     override fun rebuildDatabase() {
         runCatching { database.close() }
         database = SnapshotDatabase.build(appContext)
+        (repository as? LocalBistRepository)?.notifyDatabaseRebuilt()
     }
 
     override suspend fun metadataSnapshotDate(): String? =
@@ -95,11 +101,13 @@ class DefaultAppContainer(
         }
         applier.seedFromBundleIfMissing()
         database = SnapshotDatabase.build(appContext)
+        (repository as? LocalBistRepository)?.notifyDatabaseRebuilt()
     }
 
     fun bootstrap() {
         applier.seedFromBundleIfMissing()
         SnapshotSyncWorker.enqueuePeriodic(appContext)
+        SnapshotSyncWorker.enqueueOneOff(appContext)
     }
 }
 

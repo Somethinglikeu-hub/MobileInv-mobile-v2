@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -58,11 +60,13 @@ class SnapshotSyncWorker(
                     Result.success()
                 }
                 is SnapshotImportResult.Failed -> {
+                    android.util.Log.e("SnapshotSyncWorker", "Import failed: ${outcome.reason}")
                     state.markFailed(outcome.reason)
                     Result.retry()
                 }
             }
         } catch (e: Exception) {
+            android.util.Log.e("SnapshotSyncWorker", "Sync failed with exception", e)
             state.markFailed(e.message ?: e::class.java.simpleName)
             Result.retry()
         }
@@ -70,6 +74,7 @@ class SnapshotSyncWorker(
 
     companion object {
         const val UNIQUE_PERIODIC_NAME = "bist_snapshot_periodic"
+        const val UNIQUE_ONE_OFF_NAME = "bist_snapshot_one_off"
 
         fun enqueuePeriodic(context: Context) {
             val request = PeriodicWorkRequestBuilder<SnapshotSyncWorker>(
@@ -88,6 +93,21 @@ class SnapshotSyncWorker(
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 UNIQUE_PERIODIC_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
+                request,
+            )
+        }
+
+        fun enqueueOneOff(context: Context) {
+            val request = OneTimeWorkRequestBuilder<SnapshotSyncWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                UNIQUE_ONE_OFF_NAME,
+                ExistingWorkPolicy.REPLACE,
                 request,
             )
         }

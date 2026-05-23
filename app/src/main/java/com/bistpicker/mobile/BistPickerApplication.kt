@@ -9,7 +9,11 @@ class BistPickerApplication : Application() {
         
         val container = DefaultAppContainer(
             appContext = this,
-            manifestUrl = "https://raw.githubusercontent.com/Somethinglikeu-hub/MobileInv-feed/gh-pages/manifest.json"
+            manifestUrl = if (BuildConfig.DEBUG) {
+                "http://10.0.2.2:8000/manifest.json"
+            } else {
+                BuildConfig.DEFAULT_MANIFEST_URL
+            }
         )
         container.bootstrap()
         AppContainerProvider.set(container)

@@ -1,5 +1,6 @@
 package com.bistpicker.mobile.data.sync
 
+import com.bistpicker.mobile.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -47,8 +48,13 @@ class SnapshotFeedClient(
         require(payload.compression.equals("gzip", ignoreCase = true)) {
             "Unsupported compression: ${payload.compression}"
         }
+        val downloadUrl = if (BuildConfig.DEBUG && payload.url.contains("raw.githubusercontent.com")) {
+            payload.url.replace("https://raw.githubusercontent.com/Somethinglikeu-hub/MobileInv-feed/gh-pages/", "http://10.0.2.2:8000/")
+        } else {
+            payload.url
+        }
         val request = Request.Builder()
-            .url(payload.url)
+            .url(downloadUrl)
             .header("User-Agent", USER_AGENT)
             .build()
         httpClient.newCall(request).execute().use { resp ->

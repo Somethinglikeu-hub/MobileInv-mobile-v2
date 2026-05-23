@@ -22,6 +22,7 @@ import com.bistpicker.mobile.ui.screens.detail.DetailScreen
 import com.bistpicker.mobile.ui.screens.about.AboutScreen
 import com.bistpicker.mobile.ui.screens.macro.MacroScreen
 import com.bistpicker.mobile.ui.screens.history.HistoryScreen
+import com.bistpicker.mobile.ui.screens.backtesting.BacktestingScreen
 import com.bistpicker.mobile.ui.theme.BistPickerTheme
 
 sealed class Screen(val route: String, val labelId: Int, val icon: ImageVector) {
@@ -86,7 +87,16 @@ fun BistPickerApp() {
                     MacroScreen()
                 }
                 composable(Screen.History.route) {
-                    HistoryScreen()
+                    HistoryScreen(
+                        onNavigateToBacktesting = {
+                            navController.navigate("backtesting")
+                        }
+                    )
+                }
+                composable("backtesting") {
+                    BacktestingScreen(
+                        onBack = { navController.popBackStack() }
+                    )
                 }
                 composable(Screen.About.route) {
                     AboutScreen()

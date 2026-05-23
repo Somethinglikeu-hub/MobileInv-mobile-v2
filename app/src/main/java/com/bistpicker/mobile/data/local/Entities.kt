@@ -143,6 +143,8 @@ data class ScoringLatestEntity(
     @ColumnInfo("dcf_growth_rate_pct") val dcfGrowthRatePct: Double?,
     @ColumnInfo("dcf_discount_rate_pct") val dcfDiscountRatePct: Double?,
     @ColumnInfo("dcf_terminal_growth_pct") val dcfTerminalGrowthPct: Double?,
+    @ColumnInfo("target_price") val targetPrice: Double?,
+    @ColumnInfo("stop_loss_price") val stopLossPrice: Double?,
 )
 
 @Entity(tableName = "sector_benchmarks")

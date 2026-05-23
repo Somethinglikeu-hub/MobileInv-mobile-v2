@@ -3,12 +3,14 @@ package com.bistpicker.mobile.ui.screens.detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +65,7 @@ fun DetailScreen(
 @Composable
 fun DetailContent(detail: StockDetail) {
     val isInPortfolio = detail.openPosition != null
+    var showAdvancedDetails by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -72,16 +75,40 @@ fun DetailContent(detail: StockDetail) {
         // 1. Header with Status Badge & Smart Signal
         item {
             Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = detail.ticker, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
-                    if (isInPortfolio) {
-                        Spacer(Modifier.width(12.dp))
-                        Surface(color = Color(0xFF4CAF50), shape = MaterialTheme.shapes.small) {
-                            Text("PORTFOYDE", modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = detail.ticker, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
+                            if (isInPortfolio) {
+                                Spacer(Modifier.width(12.dp))
+                                Surface(color = Color(0xFF4CAF50), shape = MaterialTheme.shapes.small) {
+                                    Text("PORTFOYDE", modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp), color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                        Text(text = detail.name ?: "", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Column(horizontalAlignment = Alignment.End) {
+                        if (detail.isLive) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(color = Color(0xFFE91E63), shape = MaterialTheme.shapes.extraSmall) {
+                                    Text("CANLI", modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp), color = Color.White, style = androidx.compose.ui.text.TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black))
+                                }
+                                Spacer(Modifier.width(6.dp))
+                                Text(text = "${String.format("%.2f", detail.currentPrice ?: 0.0)} TL", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                            }
+                            Text(text = "Snap: ${String.format("%.2f", detail.snapshotPrice ?: 0.0)} TL", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                        } else {
+                            Text(text = "${String.format("%.2f", detail.currentPrice ?: (detail.priceHistory.lastOrNull()?.close ?: 0.0))} TL", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                            Text(text = "Snapshot Fiyati", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                         }
                     }
                 }
-                Text(text = detail.name ?: "", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
                 
                 // Smart Signal Reason (if any)
                 detail.suggestedAction?.let { action ->
@@ -101,7 +128,19 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 2. Investment Thesis / Inclusion Reason
+        // 2. Price Lane (Visual Stop/Target)
+        item {
+            val basePrice = detail.snapshotPrice ?: (detail.priceHistory.lastOrNull()?.close ?: 0.0)
+            PriceLaneBar(
+                currentPrice = detail.currentPrice ?: basePrice,
+                stopPrice = detail.stopLossPrice ?: (basePrice * 0.90),
+                targetPrice = detail.targetPrice ?: (basePrice * 1.30),
+                isLive = detail.isLive,
+                snapshotPrice = detail.snapshotPrice
+            )
+        }
+
+        // 3. Investment Thesis / Inclusion Reason
         item {
             val sectionTitle = if (isInPortfolio) "Neden Portfoyde?" else "Yatirim Tezi (Analiz)"
             Text(text = sectionTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
@@ -149,7 +188,7 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 3. Deep Financial Insights
+        // 4. Deep Financial Insights
         item {
             Text(text = "Derin Finansal Analiz", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -178,7 +217,7 @@ fun DetailContent(detail: StockDetail) {
             }
         }
 
-        // 4. Sectoral Benchmark
+        // 5. Sectoral Benchmark
         item {
             Text(text = "Sektor Kiyaslama", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -187,7 +226,7 @@ fun DetailContent(detail: StockDetail) {
             } ?: Text("Bu sektor icin kiyaslama verisi bulunamadi.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
         }
 
-        // 5. Model Detail Scores
+        // 6. Model Detail Scores
         item {
             Text(text = "Model Skorlari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
             Spacer(Modifier.height(8.dp))
@@ -201,6 +240,193 @@ fun DetailContent(detail: StockDetail) {
                     SimpleScoreRow("DCF Iskonto", f.dcfMos)
                 }
             }
+        }
+
+        // 7. Toggle for Advanced details
+        item {
+            Button(
+                onClick = { showAdvancedDetails = !showAdvancedDetails },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            ) {
+                Text(if (showAdvancedDetails) "Gelismis Verileri Gizle" else "Gelismis Verileri Goster")
+            }
+        }
+
+        if (showAdvancedDetails) {
+            val fin = detail.financials
+            val dcf = detail.dcf
+            
+            // 8. Inflation accounting (TAS 29)
+            item {
+                Text(text = "Enflasyon Muhasebesi (TAS 29) & Reel Karlilik", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
+                Spacer(Modifier.height(8.dp))
+                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MetricRow("Raporlanan Net Kar", formatCurrency(fin?.reportedNetIncome))
+                        MetricRow("Duzeltilmis Net Kar", formatCurrency(fin?.adjustedNetIncome ?: fin?.reportedNetIncome))
+                        MetricRow("Parasal Kazanc/Kayip", formatCurrency(fin?.monetaryGainLoss))
+                        MetricRow("Reel EPS Buyumesi", "${String.format("%.1f", (fin?.realEpsGrowthPct ?: 0.0) * 100)}%")
+                        MetricRow("Duzeltilmis ROA", "${String.format("%.1f", (fin?.roaAdjusted ?: 0.0) * 100)}%")
+                    }
+                }
+            }
+
+            // 9. Warren Buffett - Owner Earnings
+            item {
+                Text(text = "Warren Buffett - Patron Kari (Owner Earnings)", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
+                Spacer(Modifier.height(8.dp))
+                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MetricRow("Patron Kari (Owner Earnings)", formatCurrency(fin?.ownerEarnings))
+                        MetricRow("Serbest Nakit Akisi (FCF)", formatCurrency(fin?.freeCashFlow))
+                        Text(
+                            "Not: Patron kari, sirketin net karina nakit disi giderlerin (amortisman vb.) eklenip, koruma/bakim amacli yatirim harcamalarinin cikarilmasiyla bulunur. Warren Buffett'a gore bir sirketin gercek nakit uretim gucunu gosteren en guvenilir metriktir.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+            }
+
+            // 10. DCF valuation details
+            item {
+                Text(text = "DCF (Indirgenmis Nakit Akisi) Hesap Detaylari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
+                Spacer(Modifier.height(8.dp))
+                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MetricRow("Icsel Deger (DCF)", "${String.format("%.2f", dcf.intrinsicValue ?: 0.0)} TL")
+                        MetricRow("DCF Buyume Hizi Projeksiyonu", "${String.format("%.1f", (dcf.growthRatePct ?: 0.0) * 100)}%")
+                        MetricRow("Kullanilan Iskonto Orani (WACC)", "${String.format("%.1f", (dcf.discountRatePct ?: 0.0) * 100)}%")
+                        MetricRow("Uc Buyume Hizi (Terminal Rate)", "${String.format("%.1f", (dcf.terminalGrowthPct ?: 0.0) * 100)}%")
+                        MetricRow("Guvenlik Marji (MOS)", "${String.format("%.1f", dcf.mosPct ?: 0.0)}%")
+                    }
+                }
+            }
+
+            // 11. Warning flags and scores
+            item {
+                Text(text = "Denetim & Risk Isaretleri", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
+                Spacer(Modifier.height(8.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    val relatedPct = (fin?.relatedPartyRevenuePct ?: 0.0) * 100
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (relatedPct > 15) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f) 
+                                             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                Text("Iliskili Taraf Gelir Orani", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                                Text("${String.format("%.1f", relatedPct)}%", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = if (relatedPct > 15) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
+                            }
+                            if (relatedPct > 15) {
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    "UYARI: Iliskili taraf gelir orani %15'in uzerinde! Bu durum, sirketin ortaklarina veya diger grup sirketlerine kontrolsuz nakit aktarma/gelir kaydirma riski barindirdigina isaret edebilir.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Spacer(Modifier.height(4.dp))
+                                Text("Sirketin grup ici ve iliskili sirketlerle olan nakit/gelir iliskileri makul duzeydedir.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                            }
+                        }
+                    }
+
+                    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            MetricRow("Piotroski F-Skoru (Ham Puan)", "${detail.factors.piotroskiRaw ?: 0} / 9")
+                            MetricRow("Lynch PEG Orani", String.format("%.2f", detail.factors.lynchPeg ?: 0.0))
+                            MetricRow("Magic Formula Skoru", String.format("%.1f", detail.factors.magicFormula ?: 0.0))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun formatCurrency(value: Double?): String {
+    if (value == null) return "--"
+    val absVal = kotlin.math.abs(value)
+    val formatted = when {
+        absVal >= 1_000_000_000 -> "${String.format("%.2f", value / 1_000_000_000)} Milyar TL"
+        absVal >= 1_000_000 -> "${String.format("%.2f", value / 1_000_000)} Milyon TL"
+        else -> "${String.format("%.2f", value)} TL"
+    }
+    return formatted
+}
+
+@Composable
+fun PriceLaneBar(
+    currentPrice: Double,
+    stopPrice: Double,
+    targetPrice: Double,
+    isLive: Boolean = false,
+    snapshotPrice: Double? = null
+) {
+    val range = targetPrice - stopPrice
+    val progress = if (range > 0) ((currentPrice - stopPrice) / range).coerceIn(0.0, 1.0) else 0.5
+
+    Column(Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text("Stop", color = Color(0xFFF44336), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+            Text(
+                text = if (isLive) "CANLI FIYAT" else "SNAPSHOT FIYATI",
+                color = if (isLive) Color(0xFFE91E63) else MaterialTheme.colorScheme.outline,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Black
+            )
+            Text("Hedef", color = Color(0xFF4CAF50), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.height(4.dp))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.outlineVariant)
+        ) {
+            // Stop to Target background
+            Row(Modifier.fillMaxSize()) {
+                Box(Modifier.weight(0.2f).fillMaxHeight().background(Color(0xFFF44336).copy(alpha = 0.3f)))
+                Box(Modifier.weight(0.6f).fillMaxHeight().background(Color.Gray.copy(alpha = 0.1f)))
+                Box(Modifier.weight(0.2f).fillMaxHeight().background(Color(0xFF4CAF50).copy(alpha = 0.3f)))
+            }
+            
+            // Current Price Indicator
+            Box(
+                Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress.toFloat())
+                    .background(Color.Transparent)
+            ) {
+                Box(
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(8.dp, 8.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("${String.format("%.2f", stopPrice)} TL", style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = "${String.format("%.2f", currentPrice)} TL",
+                fontWeight = FontWeight.Black,
+                color = if (isLive) Color(0xFFE91E63) else MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text("${String.format("%.2f", targetPrice)} TL", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

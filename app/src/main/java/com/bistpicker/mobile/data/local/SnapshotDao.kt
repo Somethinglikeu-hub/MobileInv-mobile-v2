@@ -105,4 +105,12 @@ interface SnapshotDao {
 
     @Query("SELECT * FROM model_performance ORDER BY date")
     fun observeModelPerformance(): Flow<List<ModelPerformanceEntity>>
+
+    @Query("""
+        SELECT close FROM price_history_730d 
+        WHERE company_id = (SELECT id FROM companies WHERE ticker = 'XU100' LIMIT 1) 
+          AND date <= :date 
+        ORDER BY date DESC LIMIT 1
+    """)
+    suspend fun getBist100PriceOnOrBefore(date: String): Double?
 }

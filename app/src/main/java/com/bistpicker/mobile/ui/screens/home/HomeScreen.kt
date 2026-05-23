@@ -22,6 +22,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bistpicker.mobile.AppContainerProvider
 import com.bistpicker.mobile.data.*
 import com.bistpicker.mobile.data.sync.SyncState
+import com.bistpicker.mobile.data.sync.SnapshotSyncWorker
+import com.bistpicker.mobile.data.sync.SyncPhase
+import androidx.compose.animation.AnimatedVisibility
 
 @Composable
 fun HomeScreen(
@@ -34,6 +37,7 @@ fun HomeScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Scaffold { innerPadding ->
         Box(Modifier.padding(innerPadding).fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
@@ -42,12 +46,95 @@ fun HomeScreen(
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
                 is HomeUiState.Success -> {
-                    HomeContent(
-                        data = state.data,
-                        onNavigateToDetail = onNavigateToDetail,
-                        onRefresh = { viewModel.refresh() }
-                    )
+                    val isEmpty = state.data.openPositions.isEmpty() && state.data.suggestions.isEmpty() && state.info == null
+                    val syncPhase = state.sync?.phase ?: SyncPhase.Idle
+                    val isSyncing = syncPhase in listOf(SyncPhase.Fetching, SyncPhase.Extracting, SyncPhase.Applying)
+
+                    if (isEmpty) {
+                        EmptyOrLoadingScreen(
+                            syncPhase = syncPhase,
+                            isSyncing = isSyncing,
+                            onRefresh = {
+                                viewModel.refresh()
+                                SnapshotSyncWorker.enqueueOneOff(context)
+                            }
+                        )
+                    } else {
+                        HomeContent(
+                            data = state.data,
+                            syncState = state.sync,
+                            onNavigateToDetail = onNavigateToDetail,
+                            onRefresh = {
+                                viewModel.refresh()
+                                SnapshotSyncWorker.enqueueOneOff(context)
+                            }
+                        )
+                    }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyOrLoadingScreen(
+    syncPhase: SyncPhase,
+    isSyncing: Boolean,
+    onRefresh: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.TrendingUp,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = "BIST Picker",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Black,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(8.dp))
+        
+        if (isSyncing) {
+            val statusMessage = when (syncPhase) {
+                SyncPhase.Fetching -> "Güncel model verileri indiriliyor..."
+                SyncPhase.Extracting -> "Veri paketi açılıyor..."
+                SyncPhase.Applying -> "Veritabanı yapılandırılıyor..."
+                else -> "Lütfen bekleyin..."
+            }
+            Spacer(Modifier.height(24.dp))
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = statusMessage,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline
+            )
+        } else {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "Uygulamayı kullanmaya başlamak için güncel verilerin indirilmesi gerekiyor.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            Spacer(Modifier.height(24.dp))
+            Button(
+                onClick = onRefresh,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(Icons.Default.Refresh, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("Verileri Şimdi İndir")
             }
         }
     }
@@ -56,52 +143,94 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     data: HomeData,
+    syncState: SyncState?,
     onNavigateToDetail: (String) -> Unit,
     onRefresh: () -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            HeaderSection(data, onRefresh)
+    val syncPhase = syncState?.phase ?: SyncPhase.Idle
+    val isSyncing = syncPhase in listOf(SyncPhase.Fetching, SyncPhase.Extracting, SyncPhase.Applying)
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        AnimatedVisibility(visible = isSyncing) {
+            val statusMessage = when (syncPhase) {
+                SyncPhase.Fetching -> "Güncel veriler indiriliyor..."
+                SyncPhase.Extracting -> "Veri paketi açılıyor..."
+                SyncPhase.Applying -> "Veritabanı güncelleniyor..."
+                else -> ""
+            }
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = statusMessage,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
 
-        if (data.suggestions.isNotEmpty()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             item {
-                SuggestionsSection(data.suggestions, onNavigateToDetail)
+                HeaderSection(
+                    weekStart = data.weekStart,
+                    weekEnd = data.weekEnd,
+                    isSyncing = isSyncing,
+                    onRefresh = onRefresh
+                )
             }
-        }
 
-        item {
-            Text(
-                "Aktif Portfoy",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+            if (data.suggestions.isNotEmpty()) {
+                item {
+                    SuggestionsSection(data.suggestions, onNavigateToDetail)
+                }
+            }
 
-        if (data.openPositions.isEmpty()) {
             item {
-                Text("Portfoyde hisse bulunmuyor.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                Text(
+                    "Aktif Portfoy",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
-        } else {
-            items(data.openPositions) { position ->
-                PositionCardSmall(position, onClick = { onNavigateToDetail(position.ticker) })
+
+            if (data.openPositions.isEmpty()) {
+                item {
+                    Text("Portfoyde hisse bulunmuyor.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                }
+            } else {
+                items(data.openPositions, key = { it.ticker }) { position ->
+                    PositionCardSmall(position, onClick = { onNavigateToDetail(position.ticker) })
+                }
             }
-        }
         
         item {
             Spacer(Modifier.height(16.dp))
         }
     }
 }
+}
 
 @Composable
-fun HeaderSection(data: HomeData, onRefresh: () -> Unit) {
+fun HeaderSection(weekStart: String?, weekEnd: String?, isSyncing: Boolean, onRefresh: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -109,11 +238,19 @@ fun HeaderSection(data: HomeData, onRefresh: () -> Unit) {
     ) {
         Column {
             Text("Picks", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
-            val weekText = if (data.weekStart != null) "${data.weekStart} - ${data.weekEnd}" else "Portfoy Yonetimi"
+            val weekText = if (weekStart != null) "$weekStart - $weekEnd" else "Portfoy Yonetimi"
             Text(weekText, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
         }
-        IconButton(onClick = onRefresh, modifier = Modifier.size(32.dp)) {
-            Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+        if (isSyncing) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        } else {
+            IconButton(onClick = onRefresh, modifier = Modifier.size(32.dp)) {
+                Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+            }
         }
     }
 }
@@ -208,7 +345,12 @@ fun PositionCardSmall(position: OpenPosition, onClick: () -> Unit) {
                 Text(position.name ?: "", style = androidx.compose.ui.text.TextStyle(fontSize = 10.sp), color = MaterialTheme.colorScheme.outline, maxLines = 1)
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("${position.currentPrice ?: 0.0} TL", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+                if (position.isLive) {
+                    Text("Snap: ${position.snapshotPrice ?: 0.0}", style = androidx.compose.ui.text.TextStyle(fontSize = 9.sp), color = MaterialTheme.colorScheme.outline)
+                    Text("Canlı: ${position.currentPrice ?: 0.0}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+                } else {
+                    Text("${position.currentPrice ?: 0.0} TL", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+                }
                 val pnl = position.pnlPct ?: 0.0
                 Text(
                     "${if (pnl >= 0) "+" else ""}${String.format("%.1f", pnl)}%",
