@@ -40,18 +40,24 @@ To support real-time portfolio returns, the app uses Yahoo Finance for live BIST
 2. **Crumb Fetching:** Using the harvested cookies, the app queries `https://query1.finance.yahoo.com/v1/test/getcrumb` to retrieve a unique session token (the "crumb").
 3. **API Quote Query:** The app queries the real-time quote endpoint using the collected cookies and the `&crumb={crumb}` URL query parameter.
 4. **Self-Healing:** In case of a `401` expiration, the handshake cache is invalidated, and a new session is automatically negotiated.
+5. **BIST100 Index Ticker (`XU100.IS`):** Note that the standard caret-prefixed Yahoo Finance ticker `^XU100` stopped updating on June 28, 2019. The app queries the active ticker **`XU100.IS`** (which has the correct current price, e.g. `13808.20`) and automatically strips the `.IS` suffix upon receipt to map back to `"XU100"` internally.
 
 ---
 
 ## 🛠️ Local Development & Debugging
 
 When writing and testing database updates locally:
-1. **Redirect Manifest:** Debug builds (`BuildConfig.DEBUG`) are configured to query the local development loopback address (`http://10.0.2.2:8000/manifest.json`) instead of the GitHub Pages repository.
-2. **Launch Local Server:** In the `MobileInv-feed` directory, run:
+1. **Redirect Manifest:** Debug builds (`BuildConfig.DEBUG`) are configured to query the local development server at `http://192.168.240.1:8000/manifest.json` (the Waydroid container host gateway) instead of the GitHub Pages repository.
+   - *Note:* If using a standard Android Studio AVD emulator, this IP should be changed back to the standard loopback alias `10.0.2.2`.
+2. **Launch Local Server:** In the `MobileInv-feed` directory (ensuring you are on the `gh-pages` branch), start the server:
    ```bash
    python -m http.server 8000
    ```
-3. **Test Synced Changes:** When the mobile emulator runs the debug version, it will pull the database directly from your local HTTP server, allowing you to test pipeline changes instantly without pushing database files to GitHub.
+3. **Configure Host Firewall:** Since Waydroid runs in a separate network namespace, the host firewall (e.g. UFW) may block requests to port 8000. Allow incoming traffic from the Waydroid network interface:
+   ```bash
+   sudo ufw allow in on waydroid0 to any port 8000
+   ```
+4. **Test Synced Changes:** When the mobile app runs in the simulator, it will pull the database directly from your local HTTP server, allowing you to test pipeline changes instantly without pushing database files to GitHub.
 
 ---
 

@@ -10,7 +10,7 @@ class BistPickerApplication : Application() {
         val container = DefaultAppContainer(
             appContext = this,
             manifestUrl = if (BuildConfig.DEBUG) {
-                "http://10.0.2.2:8000/manifest.json"
+                "http://192.168.240.1:8000/manifest.json"
             } else {
                 BuildConfig.DEFAULT_MANIFEST_URL
             }

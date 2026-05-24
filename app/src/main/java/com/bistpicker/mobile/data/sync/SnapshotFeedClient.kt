@@ -49,7 +49,7 @@ class SnapshotFeedClient(
             "Unsupported compression: ${payload.compression}"
         }
         val downloadUrl = if (BuildConfig.DEBUG && payload.url.contains("raw.githubusercontent.com")) {
-            payload.url.replace("https://raw.githubusercontent.com/Somethinglikeu-hub/MobileInv-feed/gh-pages/", "http://10.0.2.2:8000/")
+            payload.url.replace("https://raw.githubusercontent.com/Somethinglikeu-hub/MobileInv-feed/gh-pages/", "http://192.168.240.1:8000/")
         } else {
             payload.url
         }

@@ -35,7 +35,8 @@ class LocalBistRepository(
 
     override suspend fun refreshLivePrices(tickers: List<String>) {
         if (livePriceClient == null) return
-        val fresh = livePriceClient.fetchPrices(tickers)
+        val targetTickers = (tickers + "XU100").distinct()
+        val fresh = livePriceClient.fetchPrices(targetTickers)
         if (fresh.isNotEmpty()) {
             _livePrices.update { current -> current + fresh }
         }

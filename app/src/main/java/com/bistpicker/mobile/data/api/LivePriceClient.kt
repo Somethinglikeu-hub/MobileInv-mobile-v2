@@ -139,7 +139,8 @@ class LivePriceClient(
             val priceMap = mutableMapOf<String, Double>()
             resultList.forEach { element ->
                 val obj = element.jsonObject
-                val symbol = obj["symbol"]?.jsonPrimitive?.content?.removeSuffix(".IS") ?: ""
+                val rawSymbol = obj["symbol"]?.jsonPrimitive?.content ?: ""
+                val symbol = if (rawSymbol.endsWith(".IS")) rawSymbol.removeSuffix(".IS") else rawSymbol
                 val price = obj["regularMarketPrice"]?.jsonPrimitive?.content?.toDoubleOrNull()
                 if (symbol.isNotEmpty() && price != null) {
                     priceMap[symbol] = price
