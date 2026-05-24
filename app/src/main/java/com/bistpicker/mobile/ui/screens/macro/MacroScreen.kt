@@ -387,7 +387,7 @@ fun PerformanceSummary(data: HomeData) {
                 
                 PerformanceItem(
                     label = "Ort. Getiri",
-                    value = "${if (totalReturn >= 0) "+" else ""}${String.format("%.1f", totalReturn * 100)}%",
+                    value = "${if (totalReturn >= 0) "+" else ""}${String.format("%.1f", totalReturn)}%",
                     color = if (totalReturn >= 0) Color(0xFF10B981) else Color(0xFFEF4444),
                     modifier = Modifier.weight(1f)
                 )
@@ -402,7 +402,7 @@ fun PerformanceSummary(data: HomeData) {
                 
                 PerformanceItem(
                     label = "BIST100 YTD",
-                    value = "${if (benchmark >= 0) "+" else ""}${String.format("%.1f", benchmark * 100)}%",
+                    value = "${if (benchmark >= 0) "+" else ""}${String.format("%.1f", benchmark)}%",
                     color = if (benchmark >= 0) Color(0xFF10B981) else Color(0xFFEF4444),
                     modifier = Modifier.weight(1f)
                 )
