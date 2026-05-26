@@ -67,16 +67,26 @@ class LocalBistRepository(
             val f6 = _livePrices
             val f7 = databaseRebuildTrigger.map {
                 val mondayDate = getCurrentMondayDate()
-                dao().getBist100PriceOnOrBefore(mondayDate) ?: 14029.54
+                val bist100Price = dao().getBist100PriceOnOrBefore(mondayDate) ?: 14029.54
+                val positions = dao().getOpenPositions()
+                val startPrices = mutableMapOf<String, Double>()
+                positions.forEach { entity ->
+                    val price = dao().getPriceOnOrBefore(entity.ticker, mondayDate)
+                    if (price != null) {
+                        startPrices[entity.ticker] = price
+                    }
+                }
+                Triple(bist100Price, startPrices, mondayDate)
             }
 
             combine(
                 combine(f1, f2, f3) { a, b, c -> Triple(a, b, c) },
                 combine(f4, f5, f6) { d, e, f -> Triple(d, e, f) },
                 f7
-            ) { t1, t2, bist100MondayPrice ->
+            ) { t1, t2, f7Data ->
                 val (homeRow, positionRows, historyRows) = t1
                 val (topRows, perfRows, prices) = t2
+                val (bist100MondayPrice, weeklyStartPrices, currentMonday) = f7Data
 
                 val suggestions = calculateSuggestions(positionRows, topRows)
 
@@ -106,12 +116,12 @@ class LocalBistRepository(
                     } else pos
                 }
 
-                val currentMonday = getCurrentMondayDate()
                 val weeklyPerformance = weeklyPerformanceManager.updateActiveWeek(
                     currentMondayDate = currentMonday,
                     dbPositions = openPositions,
                     livePrices = prices,
-                    bist100MondayPrice = bist100MondayPrice
+                    bist100MondayPrice = bist100MondayPrice,
+                    weeklyStartPrices = weeklyStartPrices
                 )
 
                 HomeData(

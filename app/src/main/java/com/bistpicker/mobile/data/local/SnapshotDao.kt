@@ -113,4 +113,15 @@ interface SnapshotDao {
         ORDER BY date DESC LIMIT 1
     """)
     suspend fun getBist100PriceOnOrBefore(date: String): Double?
+
+    @Query("""
+        SELECT close FROM price_history_730d 
+        WHERE company_id = (SELECT id FROM companies WHERE ticker = :ticker LIMIT 1) 
+          AND date <= :date 
+        ORDER BY date DESC LIMIT 1
+    """)
+    suspend fun getPriceOnOrBefore(ticker: String, date: String): Double?
+
+    @Query("SELECT * FROM open_positions ORDER BY sort_order")
+    suspend fun getOpenPositions(): List<OpenPositionEntity>
 }

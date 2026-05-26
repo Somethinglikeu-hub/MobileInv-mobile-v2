@@ -173,6 +173,7 @@ fun LivePortfolioPerformanceCard(
         cumulativePortfolio *= (1.0 + record.portfolioReturn)
         cumulativeBist100 *= (1.0 + record.bist100Return)
     }
+    
     val totalPortfolioReturn = (cumulativePortfolio - 1.0) * 100.0
     val totalBist100Return = (cumulativeBist100 - 1.0) * 100.0
     val totalAlpha = totalPortfolioReturn - totalBist100Return
