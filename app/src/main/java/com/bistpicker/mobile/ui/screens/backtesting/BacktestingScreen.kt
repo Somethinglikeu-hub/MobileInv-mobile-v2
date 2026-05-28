@@ -56,7 +56,7 @@ fun BacktestingScreen(
                     )
                 }
                 Text(
-                    text = "Backtesting (1 Yil)",
+                    text = "Backtesting (10 Yil)",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Center)

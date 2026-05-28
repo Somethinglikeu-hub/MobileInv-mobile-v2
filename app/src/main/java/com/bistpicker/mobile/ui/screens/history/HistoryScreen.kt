@@ -125,14 +125,14 @@ fun BacktestingNavigationCard(onNavigateToBacktesting: () -> Unit) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Model Backtesting (1 Yıl)",
+                        text = "Model Backtesting (10 Yıl)",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Black,
                         color = Color.White
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Point-in-Time simülasyonu ile 1 yıllık model performans grafiği ve detayları için tıklayın.",
+                        text = "Point-in-Time simülasyonu ile 10 yıllık model performans grafiği ve detayları için tıklayın.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f),
                         lineHeight = 15.sp
