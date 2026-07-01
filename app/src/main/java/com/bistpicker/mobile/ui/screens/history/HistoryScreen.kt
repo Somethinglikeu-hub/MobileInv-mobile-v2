@@ -47,6 +47,7 @@ fun HistoryScreen(
                 }
                 is HistoryUiState.Success -> {
                     HistoryContent(
+                        performance = state.performance,
                         closed = state.closedPositions,
                         openPositions = state.openPositions,
                         weeklyPerformance = state.weeklyPerformance,
@@ -60,6 +61,7 @@ fun HistoryScreen(
 
 @Composable
 fun HistoryContent(
+    performance: List<ModelPerformancePoint>,
     closed: List<ClosedPosition>,
     openPositions: List<OpenPosition>,
     weeklyPerformance: List<WeeklyPerformanceRecord>,
@@ -71,7 +73,7 @@ fun HistoryContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            BacktestingNavigationCard(onNavigateToBacktesting)
+            BacktestingNavigationCard(performance, onNavigateToBacktesting)
         }
 
         item {
@@ -97,7 +99,11 @@ fun HistoryContent(
 }
 
 @Composable
-fun BacktestingNavigationCard(onNavigateToBacktesting: () -> Unit) {
+fun BacktestingNavigationCard(
+    performance: List<ModelPerformancePoint>,
+    onNavigateToBacktesting: () -> Unit,
+) {
+    val periodLabel = modelPerformancePeriodLabel(performance)
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onNavigateToBacktesting,
@@ -125,14 +131,14 @@ fun BacktestingNavigationCard(onNavigateToBacktesting: () -> Unit) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Model Backtesting (10 Yıl)",
+                        text = "Model Backtesting",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Black,
                         color = Color.White
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Point-in-Time simülasyonu ile 10 yıllık model performans grafiği ve detayları için tıklayın.",
+                        text = "$periodLabel dönemine ait yayınlanmış model NAV grafiği ve detayları.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f),
                         lineHeight = 15.sp
@@ -196,7 +202,7 @@ fun LivePortfolioPerformanceCard(
             ) {
                 Column {
                     Text(
-                        text = "Kümülatif Portföy Getirisi",
+                        text = "Merkezi Portföy Getirisi",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Black
                     )
@@ -213,7 +219,7 @@ fun LivePortfolioPerformanceCard(
                         shape = MaterialTheme.shapes.extraSmall
                     ) {
                         Text(
-                            text = "CANLI TAKİP",
+                        text = "CANLI TAKİP",
                             color = Color.White,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
@@ -387,6 +393,13 @@ fun WeeklyPerformanceRecordCard(record: WeeklyPerformanceRecord) {
             }
         }
     }
+}
+
+fun modelPerformancePeriodLabel(performance: List<ModelPerformancePoint>): String {
+    if (performance.isEmpty()) return "Veri bekleniyor"
+    val start = formatDateToTurkish(performance.first().date)
+    val end = formatDateToTurkish(performance.last().date)
+    return "$start – $end"
 }
 
 @Composable

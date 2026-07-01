@@ -75,7 +75,6 @@ class DefaultAppContainer(
     private val livePriceClient = LivePriceClient(httpClient, json)
 
     override val repository: BistRepository = LocalBistRepository(
-        context = appContext,
         daoProvider = ::activeDao,
         json = json,
         livePriceClient = livePriceClient,
