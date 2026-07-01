@@ -1,5 +1,11 @@
 # BIST Stock Picker Mobile App v2.0 (Android) 📱
 
+> **ARCHIVED / DEVELOPMENT FROZEN - 2026-07-01**
+>
+> This repository is kept for historical reference only. MobileInv's active user interface is the installable PWA in `MobileInv-feed`: https://somethinglikeu-hub.github.io/MobileInv-feed/
+>
+> Do not spend routine development time/tokens on Android features, bug fixes, UI polish, performance work, notification work, builds, or tests unless the user explicitly reverses the PWA-only product decision. The files stay here; the product moves through the PWA.
+
 This repository contains the mobile client application for the **BIST Stock Picker** system. It is a native Android application built with Kotlin, Jetpack Compose, Room Database, and modern reactive practices.
 
 ---
