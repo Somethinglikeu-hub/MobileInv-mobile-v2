@@ -1,6 +1,5 @@
 package com.bistpicker.mobile.data
 
-import android.content.Context
 import com.bistpicker.mobile.data.api.LivePriceClient
 import com.bistpicker.mobile.data.local.*
 import kotlinx.coroutines.flow.*
@@ -13,13 +12,10 @@ import java.text.SimpleDateFormat
  * Repository backed by Room.
  */
 class LocalBistRepository(
-    private val context: Context,
     private val daoProvider: () -> SnapshotDao,
     private val json: Json,
     private val livePriceClient: LivePriceClient? = null
 ) : BistRepository {
-
-    private val weeklyPerformanceManager = WeeklyPerformanceManager(context, json)
 
     private fun dao() = daoProvider()
 
@@ -42,20 +38,6 @@ class LocalBistRepository(
         }
     }
 
-    private fun getCurrentMondayDate(): String {
-        val now = Calendar.getInstance()
-        val dayOfWeek = now.get(Calendar.DAY_OF_WEEK)
-        val diffToMonday = if (dayOfWeek >= Calendar.MONDAY) {
-            Calendar.MONDAY - dayOfWeek
-        } else {
-            -6
-        }
-        val monday = now.clone() as Calendar
-        monday.add(Calendar.DAY_OF_YEAR, diffToMonday)
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        return sdf.format(monday.time)
-    }
-
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     override fun observeHome(): Flow<HomeData> {
         return databaseRebuildTrigger.flatMapLatest {
@@ -65,28 +47,13 @@ class LocalBistRepository(
             val f4 = dao().observeTopScoring(limit = 10)
             val f5 = dao().observeModelPerformance()
             val f6 = _livePrices
-            val f7 = databaseRebuildTrigger.map {
-                val mondayDate = getCurrentMondayDate()
-                val bist100Price = dao().getBist100PriceOnOrBefore(mondayDate) ?: 14029.54
-                val positions = dao().getOpenPositions()
-                val startPrices = mutableMapOf<String, Double>()
-                positions.forEach { entity ->
-                    val price = dao().getPriceOnOrBefore(entity.ticker, mondayDate)
-                    if (price != null) {
-                        startPrices[entity.ticker] = price
-                    }
-                }
-                Triple(bist100Price, startPrices, mondayDate)
-            }
 
             combine(
                 combine(f1, f2, f3) { a, b, c -> Triple(a, b, c) },
                 combine(f4, f5, f6) { d, e, f -> Triple(d, e, f) },
-                f7
-            ) { t1, t2, f7Data ->
+            ) { t1, t2 ->
                 val (homeRow, positionRows, historyRows) = t1
                 val (topRows, perfRows, prices) = t2
-                val (bist100MondayPrice, weeklyStartPrices, currentMonday) = f7Data
 
                 val suggestions = calculateSuggestions(positionRows, topRows)
 
@@ -116,12 +83,14 @@ class LocalBistRepository(
                     } else pos
                 }
 
-                val weeklyPerformance = weeklyPerformanceManager.updateActiveWeek(
-                    currentMondayDate = currentMonday,
-                    dbPositions = openPositions,
+                val closedPositions = historyRows.map { it.toDomain() }
+                val weeklyPerformance = buildWeeklyPerformanceRecords(
+                    closedPositions = closedPositions,
+                    openPositions = openPositions,
                     livePrices = prices,
-                    bist100MondayPrice = bist100MondayPrice,
-                    weeklyStartPrices = weeklyStartPrices
+                    priceOnOrBefore = { ticker, date ->
+                        dao().getPriceOnOrBefore(ticker, date)
+                    },
                 )
 
                 HomeData(
@@ -153,7 +122,7 @@ class LocalBistRepository(
                         )
                     },
                     openPositions = openPositions,
-                    history = historyRows.map { it.toDomain() },
+                    history = closedPositions,
                     suggestions = suggestions,
                     modelPerformance = perfRows.map { it.toDomain() },
                     weekStart = sdf.format(monday.time),

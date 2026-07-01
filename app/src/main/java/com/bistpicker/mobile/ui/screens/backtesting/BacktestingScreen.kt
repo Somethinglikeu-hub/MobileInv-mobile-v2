@@ -26,6 +26,7 @@ import com.bistpicker.mobile.ui.screens.history.HistoryViewModel
 import com.bistpicker.mobile.ui.screens.history.PerformanceMetric
 import com.bistpicker.mobile.data.ClosedPosition
 import com.bistpicker.mobile.ui.screens.history.ClosedPositionCard
+import com.bistpicker.mobile.ui.screens.history.modelPerformancePeriodLabel
 
 @Composable
 fun BacktestingScreen(
@@ -56,7 +57,7 @@ fun BacktestingScreen(
                     )
                 }
                 Text(
-                    text = "Backtesting (10 Yil)",
+                    text = "Model Backtesting",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Center)
@@ -102,7 +103,7 @@ fun BacktestingContent(
         if (performance.isNotEmpty()) {
             item {
                 Text(
-                    text = "Performans Grafiği (Kümplatif %)",
+                    text = "Kümülatif NAV Grafiği",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -114,7 +115,7 @@ fun BacktestingContent(
 
         item {
             Text(
-                "Aylık/Haftalık Geçmiş Model Puan Değişimleri",
+                "Yayınlanmış Model NAV Noktaları",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.outline
@@ -138,7 +139,7 @@ fun BacktestingContent(
         item {
             Spacer(Modifier.height(8.dp))
             Text(
-                "Geçmiş Model İşlemleri",
+                "Gerçek Portföy Rotasyonları (Backtest Değildir)",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.outline
@@ -164,6 +165,7 @@ fun BacktestingContent(
 @Composable
 fun ModelPerformanceDetailCard(performance: List<ModelPerformancePoint>) {
     val last = performance.lastOrNull()
+    val periodLabel = modelPerformancePeriodLabel(performance)
     
     val totalReturn = if (last != null) last.strategyReturn - 100.0 else 0.0
     val benchReturn = if (last != null) last.benchmarkReturn - 100.0 else 0.0
@@ -177,6 +179,12 @@ fun ModelPerformanceDetailCard(performance: List<ModelPerformancePoint>) {
         border = CardDefaults.outlinedCardBorder()
     ) {
         Column(Modifier.padding(16.dp)) {
+            Text(
+                text = periodLabel,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.outline,
+            )
+            Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 PerformanceMetric(
                     label = "Model Toplam Getiri",
@@ -207,7 +215,7 @@ fun ModelPerformanceDetailCard(performance: List<ModelPerformancePoint>) {
             
             Spacer(Modifier.height(12.dp))
             Text(
-                "Bu simülasyon, her Pazartesi sabahı o anki en güncel bilançolarla yeniden oluşturulan point-in-time portföylerin getirilerini kümülatif olarak yansıtır. Geleceğe bakma hatası (look-ahead bias) barındırmaz.",
+                "Bu kart yalnızca snapshot içinde kesintisiz olarak yayınlanan NAV dönemini gösterir. Tarih aralığı başlıktadır; geçmiş veri tamamlanmadan sabit bir “10 yıl” iddiası gösterilmez.",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline,
                 lineHeight = 14.sp
